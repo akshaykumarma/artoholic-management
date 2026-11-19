@@ -15,3 +15,12 @@ jest.mock('expo-local-authentication', () => ({
   isEnrolledAsync: jest.fn(async () => true),
   authenticateAsync: jest.fn(async () => ({ success: true }))
 }));
+jest.mock('expo-image-manipulator', () => ({
+  SaveFormat: { JPEG: 'jpeg' },
+  manipulateAsync: jest.fn(async (uri: string, actions: unknown[]) => ({ uri: `${uri}#compressed`, width: 1600, height: 1200, actions }))
+}));
+jest.mock('expo-image-picker', () => ({
+  requestCameraPermissionsAsync: jest.fn(async () => ({ granted: true })),
+  launchCameraAsync: jest.fn(async () => ({ canceled: false, assets: [{ uri: 'file://photo.jpg', width: 4000, height: 3000 }] })),
+  launchImageLibraryAsync: jest.fn(async () => ({ canceled: false, assets: [{ uri: 'file://photo.jpg', width: 4000, height: 3000 }] }))
+}));
