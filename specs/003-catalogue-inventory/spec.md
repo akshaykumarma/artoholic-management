@@ -16,6 +16,12 @@ dispatch, returns, damage, counts, transfers — is written to this ledger. Ware
 themselves are defined in 004; until 004 ships, stock is held against a single default location
 per warehouse.
 
+## Clarifications
+
+### Session 2026-11-19
+
+- Q: Who can correct stock levels by hand outside a physical count? → A: Store Managers request with a reason and an Admin approves before stock changes; Admins' own corrections apply directly.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Admin builds the catalogue (Priority: P1)
@@ -72,14 +78,15 @@ preview lists the error row, fix it, import, and confirm the item view totals ma
 ### User Story 3 - Every stock change is in the ledger (Priority: P1)
 
 Any change to stock — opening stock, receipt, dispatch, return, adjustment, damage, write-off,
-cut, transfer, correction — is recorded as a ledger entry with item (or piece), quantity, from
+cut, transfer, handover between events, correction — is recorded as a ledger entry with item (or piece), quantity, from
 and to location and condition, reason, who, when, and the related event, count or transfer.
 Quantities can never be typed over.
 
 **Why this priority**: Constitution principle II; later features (005–007) only work through it.
 
-**Independent Test**: Post a manual adjustment of −3 chairs with a reason; confirm the item view
-total drops by 3 and the ledger shows the entry with the user, reason and time.
+**Independent Test**: As a Store Manager, request a correction of −3 chairs with a reason; confirm
+stock is unchanged until an Admin approves, then the item view total drops by 3 and the ledger
+shows the entry with requester, approver, reason and time.
 
 **Acceptance Scenarios**:
 
@@ -87,7 +94,10 @@ total drops by 3 and the ledger shows the entry with the user, reason and time.
    **Then** there is none; changes are made only by recording a movement.
 2. **Given** a ledger entry, **When** anyone tries to change or delete it, **Then** the platform
    refuses; a mistake is fixed by a correction entry referencing the original, with a reason.
-3. **Given** a movement that would make any condition negative at a location, **When** it is
+3. **Given** a Store Manager requests a manual correction, **When** submitted, **Then** stock does
+   not change until an Admin approves it; an Admin's own correction applies at once; both need a
+   reason.
+4. **Given** a movement that would make any condition negative at a location, **When** it is
    submitted, **Then** it is refused naming the item, location and available quantity.
 
 ---
@@ -210,6 +220,9 @@ minimum level.
 - **FR-012**: The platform MUST provide the reserve/release and move operations that 005–007 use:
   reserve available stock for an event, release it, and move between conditions/locations — all as
   ledger entries.
+- **FR-012a**: Manual stock corrections outside counts and checklists MUST need a reason; those
+  requested by Store Managers MUST change stock only after an Admin approves; Admins' own
+  corrections apply directly. Requests and decisions are audited and notify Admins.
 - **FR-013**: Item photos MUST be kept for as long as the item exists (owner decision Q12).
 - **FR-014**: Event Managers MUST have view-only access to the catalogue and stock; Store
   Managers see and act on stock only in their assigned warehouses (permission matrix, 002).
@@ -227,6 +240,8 @@ minimum level.
   correction of another entry).
 - **Stock balance**: item × location × condition → quantity; derived from the ledger and
   rebuildable.
+- **Correction request**: item or piece, bin, condition, quantity change, reason, requester,
+  status (pending, approved, rejected), decided by, ledger entry.
 - **Import batch**: file, uploaded by, preview result, confirmed time.
 
 ## Success Criteria *(mandatory)*

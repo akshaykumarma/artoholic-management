@@ -297,7 +297,8 @@ show "OK"; stop file storage and confirm it shows "Down" within one minute while
 | Event line | One required item on an event, with planned, dispatched, received, returned, damaged, lost, and consumed quantities. |
 | Checklist step | One of the four handovers: warehouse dispatch, site receipt, return dispatch, warehouse receipt. |
 | Dispatch round | One pass through the checklist steps; an event may have extra rounds when items are added. |
-| Reconciled | An event line where returned + damaged + lost + consumed = dispatched. |
+| Reconciled | An event line where returned + handed over + damaged + lost + consumed = dispatched. |
+| Handover | Items passed directly from one event to another without returning to a warehouse, counted by both Event Managers. |
 | Damage report | A record of damaged or missing quantity with photos, awaiting or carrying an Admin decision. |
 | Over-booking | Required quantity for an event's date window exceeds available stock; allowed, with a warning. |
 | Physical count | A scheduled or ad-hoc count of stock against the records, producing variances for approval. |

@@ -65,7 +65,7 @@ receive the file on WhatsApp and email by 09:15 IST and the deliveries are logge
 ### User Story 3 - Admin dashboard (Priority: P2)
 
 Admins see on their home screen: today's and this week's dispatches and returns, events by
-status, pending approvals (damage, variances, write-offs, transfer shortfalls), damage value this
+status, pending approvals (damage, variances, write-offs, stock corrections, transfer shortfalls), damage value this
 month, low-stock items, over-booked events, and the next scheduled counts — each linking to the
 underlying list.
 
@@ -81,7 +81,7 @@ underlying list.
 | --- | --- | --- | --- |
 | R1 | Stock on hand | Item, code, category, warehouse, bin, available, reserved, out, damaged, value ₹ | Weekly, Monday 08:00 |
 | R2 | Stock movement ledger | Date, item, type, quantity, from, to, user, reference, reason | On demand |
-| R3 | Event item status | Event, item, planned, dispatched, received, returned, damaged, lost, consumed, gap | Daily 20:00 |
+| R3 | Event item status | Event, item, planned, dispatched, received, returned, handed over, damaged, lost, consumed, gap | Daily 20:00 |
 | R4 | Damage and loss | Date, number, event, item, quantity, kind, reason, value ₹, reporter, decision, decided by | Weekly and monthly |
 | R5 | Pending approvals | Type, number, event or count, item, quantity, waiting since | Daily 09:00 |
 | R6 | Upcoming dispatches and returns (7 days) | Date, event, warehouse, lines, managers, status, over-booked | Daily 07:00 |

@@ -17,6 +17,12 @@ username, email or phone; first-login password change; forgotten-password reset;
 and biometric unlock on phones. It also fixes the permission matrix that every later feature
 enforces.
 
+## Clarifications
+
+### Session 2026-11-19
+
+- Q: Can two staff accounts share the same phone number? → A: No — every account needs its own phone number; people sign in with their own account on shared devices.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Admin creates a staff account with one or more roles (Priority: P1)
@@ -173,6 +179,8 @@ screen load drops the warehouse menu and the platform refuses warehouse actions.
   with neither delivered, the Admin can set a temporary password.
 - Reset codes are requested repeatedly: at most 3 codes per account per hour; further requests
   show the same generic message but send nothing.
+- Several helpers use one shared warehouse phone: each still has their own account and own phone
+  number; they sign in and out on the shared device with their own credentials.
 - A Store Manager has no warehouses assigned: they can sign in but warehouse screens say "No
   warehouses assigned — contact your Admin".
 - The Super Admin forgets their password: reset works the same way; if no message channel works,
@@ -183,7 +191,7 @@ screen load drops the warehouse menu and the platform refuses warehouse actions.
 ### Functional Requirements
 
 - **FR-001** (USR-01): Admins and the Super Admin MUST be able to create users with full name,
-  phone number (mandatory, unique, stored with country code, default +91), email (optional,
+  phone number (mandatory, unique per account — no sharing, stored with country code, default +91), email (optional,
   unique when given), username, temporary password, and one or more roles.
 - **FR-002** (USR-02): The username MUST default to the email, else to the phone number; the
   creator MAY override it; it MUST be unique across usernames, emails and phone numbers of all
