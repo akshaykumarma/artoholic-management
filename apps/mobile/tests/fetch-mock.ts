@@ -35,5 +35,6 @@ export const ME = {
     { moduleId: 'home', labelKey: 'module.home', path: '/' },
     { moduleId: 'conventions', labelKey: 'module.conventions', path: '/reference/conventions' }
   ],
+  mustChangePassword: false,
   session: { expiresAt: '2026-12-19T10:00:00.000Z', idleTimeoutMinutes: null }
 };

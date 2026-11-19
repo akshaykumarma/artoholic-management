@@ -19,6 +19,9 @@ export default function HomeScreen({ onOpen }: { onOpen?: (path: string) => void
           <Text style={styles.itemText}>{t(m.labelKey as Parameters<typeof t>[0])}</Text>
         </Pressable>
       ))}
+      <Pressable accessibilityRole="button" style={styles.item} onPress={() => onOpen?.('/settings/security')}>
+        <Text style={styles.itemText}>{t('security.title')}</Text>
+      </Pressable>
       <Pressable accessibilityRole="button" style={styles.signOut} onPress={signOut}>
         <Text>{t('signOut')}</Text>
       </Pressable>

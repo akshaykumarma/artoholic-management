@@ -8,6 +8,7 @@ export function buildMe(auth: Authenticated, platform: ClientPlatform): Me {
     username: auth.user.username,
     roles: auth.user.roles,
     menu: buildMenu(auth.user.roles, platform),
+    mustChangePassword: auth.user.mustChangePassword,
     session: { expiresAt: auth.session.expiresAt.toISOString(), idleTimeoutMinutes: auth.session.idleTimeoutMinutes }
   };
 }

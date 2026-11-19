@@ -14,6 +14,6 @@ export default defineConfig({
     url: `http://localhost:${PORT}/api/health`,
     reuseExistingServer: false,
     timeout: 120_000,
-    env: { DATABASE_URL, DATABASE_URL_E2E: DATABASE_URL, NODE_ENV: 'production', APP_VERSION: '0.1.0', WEB_IDLE_MINUTES: '60' }
+    env: { DATABASE_URL, DATABASE_URL_E2E: DATABASE_URL, OTP_HASH_SECRET: 'e2e-only-otp-secret', NODE_ENV: 'production', APP_VERSION: '0.1.0', WEB_IDLE_MINUTES: '60' }
   }
 });

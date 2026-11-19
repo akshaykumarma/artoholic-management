@@ -1,4 +1,4 @@
-import type { Role } from '@artoholic/shared';
+import { normalisePhone, type Role } from '@artoholic/shared';
 import { withTransaction, getPool } from '../../db/client';
 import { ApiError } from '../http/errors';
 import type { RequestContext } from '../http/context';
@@ -13,24 +13,30 @@ interface Row {
   username: string;
   password_hash: string;
   status: string;
+  must_change_password: boolean;
   roles: Role[] | null;
 }
 
-/** Username + password sign-in with lockout and audit (FR-005–FR-007). */
+/**
+ * Sign-in by username, email or phone plus password, with lockout and audit (001 FR-005–007,
+ * 002 FR-006). Identifiers are unique across all three columns, so at most one account matches.
+ */
 export async function signIn(
-  username: string,
+  identifier: string,
   password: string,
   ctx: RequestContext
 ): Promise<{ token: string; auth: Authenticated }> {
   const pool = getPool();
+  const username = identifier;
   const { rows } = await pool.query<Row>(
-    `SELECT u.id, u.full_name, u.username, u.password_hash, u.status,
+    `SELECT u.id, u.full_name, u.username, u.password_hash, u.status, u.must_change_password,
             array_remove(array_agg(r.role::text), NULL) AS roles
        FROM users u LEFT JOIN user_roles r ON r.user_id = u.id
-      WHERE u.username = $1 GROUP BY u.id`,
-    [username]
+      WHERE u.username = $1 OR u.email = $2::citext OR u.phone_e164 = $3
+      GROUP BY u.id LIMIT 2`,
+    [identifier, identifier.includes('@') ? identifier : null, normalisePhone(identifier)]
   );
-  const user = rows[0];
+  const user = rows.length === 1 ? rows[0] : undefined;
   const key = { userId: user?.id ?? null, ip: ctx.ip };
 
   const before = await lockState(pool, key);
@@ -58,7 +64,10 @@ export async function signIn(
     await writeAudit(tx, { action: 'auth.sign_in', actorUserId: user.id, entityType: 'session', entityId: session.id, ctx });
     return {
       token,
-      auth: { user: { id: user.id, fullName: user.full_name, username: user.username, roles: user.roles ?? [] }, session }
+      auth: {
+        user: { id: user.id, fullName: user.full_name, username: user.username, roles: user.roles ?? [], mustChangePassword: user.must_change_password },
+        session
+      }
     };
   });
 }

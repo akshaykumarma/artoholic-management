@@ -1,6 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 async function signIn(page: Page, username: string, password = 'e2e-password-123') {
+  await page.waitForLoadState('networkidle');
   await page.getByLabel('Username').fill(username);
   await page.getByLabel('Password').fill(password);
   await page.getByRole('button', { name: 'Sign in' }).click();
@@ -18,7 +19,7 @@ test('Super Admin signs in and sees the role menu (US1-1)', async ({ page }) => 
   await signIn(page, 'owner');
   await expect(page.getByRole('heading', { name: 'Welcome, Owner' })).toBeVisible();
   const nav = page.getByRole('navigation', { name: 'Main' });
-  await expect(nav.getByRole('link')).toHaveText(['Home', 'Platform status', 'Display conventions']);
+  await expect(nav.getByRole('link')).toHaveText(['Home', 'Users & roles', 'Platform status', 'Display conventions']);
 });
 
 test('signed-out visitor is returned to the page they asked for (US1-5)', async ({ page }) => {

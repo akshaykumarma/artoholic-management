@@ -33,8 +33,8 @@ const STATE_CHANGING = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 export function createApiClient(o: ApiClientOptions) {
   const doFetch = o.fetchImpl ?? fetch;
 
-  async function request<T>(method: string, path: string, opts: { body?: unknown; schema?: ZodType<T> } = {}): Promise<T> {
-    const headers: Record<string, string> = { 'x-client-platform': o.platform, 'x-client-version': o.version };
+  async function request<T>(method: string, path: string, opts: { body?: unknown; schema?: ZodType<T>; headers?: Record<string, string> } = {}): Promise<T> {
+    const headers: Record<string, string> = { 'x-client-platform': o.platform, 'x-client-version': o.version, ...opts.headers };
     if (opts.body !== undefined) headers['content-type'] = 'application/json';
     if (o.platform === 'web' && STATE_CHANGING.has(method)) {
       const csrf = o.getCsrf?.();

@@ -26,6 +26,7 @@ export interface SessionUser {
   fullName: string;
   username: string;
   roles: Role[];
+  mustChangePassword: boolean;
 }
 
 export interface Authenticated {
@@ -64,10 +65,10 @@ export async function validateSession(db: Db, token: string, platform: ClientPla
   const isWeb = platform === 'web';
   const { rows } = await db.query<{
     id: string; user_id: string; client_platform: ClientPlatform; expires_at: Date; last_seen_at: Date; revoked_at: Date | null;
-    full_name: string; username: string; status: string; roles: Role[] | null;
+    full_name: string; username: string; status: string; roles: Role[] | null; must_change_password: boolean;
   }>(
     `SELECT s.id, s.user_id, s.client_platform, s.expires_at, s.last_seen_at, s.revoked_at,
-            u.full_name, u.username, u.status,
+            u.full_name, u.username, u.status, u.must_change_password,
             array_remove(array_agg(r.role::text), NULL) AS roles
        FROM sessions s JOIN users u ON u.id = s.user_id LEFT JOIN user_roles r ON r.user_id = u.id
       WHERE s.token_hash = $1
@@ -85,11 +86,19 @@ export async function validateSession(db: Db, token: string, platform: ClientPla
     await db.query('UPDATE sessions SET last_seen_at = $2, expires_at = $3 WHERE id = $1', [s.id, t, expiresAt]);
   }
   return {
-    user: { id: s.user_id, fullName: s.full_name, username: s.username, roles: s.roles ?? [] },
+    user: { id: s.user_id, fullName: s.full_name, username: s.username, roles: s.roles ?? [], mustChangePassword: s.must_change_password },
     session: { id: s.id, platform: s.client_platform, expiresAt, idleTimeoutMinutes: isWeb ? webIdleMinutes() : null }
   };
 }
 
 export async function revokeSession(db: Db, sessionId: string): Promise<void> {
   await db.query('UPDATE sessions SET revoked_at = $2 WHERE id = $1 AND revoked_at IS NULL', [sessionId, now()]);
+}
+
+/** Ends every session of a user, optionally keeping one (the caller's own). */
+export async function revokeUserSessions(db: Db, userId: string, exceptSessionId?: string): Promise<void> {
+  await db.query(
+    'UPDATE sessions SET revoked_at = $2 WHERE user_id = $1 AND revoked_at IS NULL AND ($3::uuid IS NULL OR id <> $3)',
+    [userId, now(), exceptSessionId ?? null]
+  );
 }

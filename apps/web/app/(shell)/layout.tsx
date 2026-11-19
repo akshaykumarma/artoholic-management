@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { buildMenu, t } from '@artoholic/shared';
+import { redirect } from 'next/navigation';
 import { requirePageAuth } from '@/lib/server-auth';
 import SignOutButton from '@/components/SignOutButton';
 import BrandMark from '@/components/BrandMark';
@@ -9,6 +10,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function ShellLayout({ children }: { children: ReactNode }) {
   const auth = await requirePageAuth();
+  if (auth.user.mustChangePassword) redirect('/change-password');
   const menu = buildMenu(auth.user.roles, 'web');
   return (
     <div className="shell">
