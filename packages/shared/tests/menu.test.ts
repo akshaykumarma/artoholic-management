@@ -4,16 +4,16 @@ import { buildMenu, MODULES } from '../src/modules';
 describe('buildMenu', () => {
   it('shows only shipped modules the roles allow, on the requesting app', () => {
     const web = buildMenu(['super_admin'], 'web').map((m) => m.moduleId);
-    expect(web).toEqual(['home', 'users', 'admin-status', 'conventions']);
+    expect(web).toEqual(['home', 'users', 'inventory', 'admin-status', 'conventions']);
     const android = buildMenu(['super_admin'], 'android').map((m) => m.moduleId);
-    expect(android).toEqual(['home', 'users', 'conventions']); // status page is web-only
+    expect(android).toEqual(['home', 'users', 'inventory', 'conventions']); // status page is web-only
   });
 
   it('gives the union of several roles with no duplicates', () => {
     const menu = buildMenu(['event_manager', 'store_manager'], 'web');
     const ids = menu.map((m) => m.moduleId);
     expect(new Set(ids).size).toBe(ids.length);
-    expect(ids).toEqual(['home']);
+    expect(ids).toEqual(['home', 'inventory']);
   });
 
   it('returns nothing for a user with no roles', () => {

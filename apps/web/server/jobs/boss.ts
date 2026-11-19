@@ -2,6 +2,7 @@ import PgBoss from 'pg-boss';
 import { getPool } from '../../db/client';
 import { logger } from '../http/logger';
 import { beat, HEARTBEAT_JOB } from './heartbeat';
+import { runStockRebuildCheck, STOCK_REBUILD_JOB } from './stock-rebuild-check';
 
 let boss: PgBoss | undefined;
 
@@ -17,5 +18,8 @@ export async function startJobs(): Promise<void> {
   await boss.createQueue(HEARTBEAT_JOB);
   await boss.work(HEARTBEAT_JOB, async () => beat(getPool()));
   await boss.schedule(HEARTBEAT_JOB, '* * * * *');
+  await boss.createQueue(STOCK_REBUILD_JOB);
+  await boss.work(STOCK_REBUILD_JOB, async () => void (await runStockRebuildCheck()));
+  await boss.schedule(STOCK_REBUILD_JOB, '30 21 * * *'); // 03:00 IST
   logger.info('background jobs started');
 }
