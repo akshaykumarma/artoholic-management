@@ -7,6 +7,7 @@ config({ path: path.resolve(__dirname, '../../../.env') });
 process.env.DATABASE_URL =
   process.env.DATABASE_URL_TEST ?? 'postgres://artoholic:artoholic@localhost:5432/artoholic_test';
 (process.env as Record<string, string>).NODE_ENV = 'test';
+process.env.BCRYPT_COST = '4'; // production minimum is 12 (enforced in password.ts)
 
 const { getPool, closePool } = await import('../db/client');
 const { migrate } = await import('../db/migrate');
