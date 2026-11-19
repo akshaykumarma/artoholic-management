@@ -18,28 +18,28 @@ failing before its implementation task.
 
 ## Phase 1: Setup (Shared Infrastructure)
 
-- [ ] T001 Create root `package.json` with npm workspaces `apps/*`, `packages/*` and scripts `dev:web`, `dev:mobile`, `typecheck`, `lint`, `test`, `test:e2e`, `db:migrate`, `seed:super-admin`; add `tsconfig.base.json` (strict, ES2022, path aliases `@shared/*`)
-- [ ] T002 [P] Scaffold `packages/shared` (TypeScript library, `src/index.ts`, Vitest config `packages/shared/vitest.config.ts`)
-- [ ] T003 [P] Scaffold `apps/web` with Next.js 14 App Router, TypeScript, `apps/web/next.config.mjs` transpiling `@artoholic/shared`
-- [ ] T004 [P] Scaffold `apps/mobile` with Expo (Expo Router, TypeScript), `apps/mobile/app.config.ts` (name "Artoholic", scheme `artoholic`), `apps/mobile/metro.config.js` for the monorepo, `jest-expo` preset in `apps/mobile/jest.config.js`
-- [ ] T005 [P] Configure ESLint + Prettier at root `.eslintrc.cjs` incl. `react/jsx-no-literals` for `apps/web/app/**` and `apps/mobile/app/**` (research R11)
-- [ ] T006 [P] Create `docker-compose.yml` with `db` (postgres:15-alpine, healthcheck), `minio` (healthcheck, bucket bootstrap), `web` (Dockerfile at `apps/web/Dockerfile`)
-- [ ] T007 [P] Create `.env.example` (DATABASE_URL, S3_ENDPOINT/KEY/SECRET/BUCKET, APP_BASE_URL, WEB_IDLE_MINUTES=60, MOBILE_SESSION_DAYS=30) and add `.env` to `.gitignore` check
-- [ ] T008 [P] Create CI workflow `.github/workflows/ci.yml`: install, typecheck, lint, unit+contract tests with a postgres service, Playwright e2e
+- [X] T001 Create root `package.json` with npm workspaces `apps/*`, `packages/*` and scripts `dev:web`, `dev:mobile`, `typecheck`, `lint`, `test`, `test:e2e`, `db:migrate`, `seed:super-admin`; add `tsconfig.base.json` (strict, ES2022, path aliases `@shared/*`)
+- [X] T002 [P] Scaffold `packages/shared` (TypeScript library, `src/index.ts`, Vitest config `packages/shared/vitest.config.ts`)
+- [X] T003 [P] Scaffold `apps/web` with Next.js 14 App Router, TypeScript, `apps/web/next.config.mjs` transpiling `@artoholic/shared`
+- [X] T004 [P] Scaffold `apps/mobile` with Expo (Expo Router, TypeScript), `apps/mobile/app.config.ts` (name "Artoholic", scheme `artoholic`), `apps/mobile/metro.config.js` for the monorepo, `jest-expo` preset in `apps/mobile/jest.config.js`
+- [X] T005 [P] Configure ESLint + Prettier at root `.eslintrc.cjs` incl. `react/jsx-no-literals` for `apps/web/app/**` and `apps/mobile/app/**` (research R11)
+- [X] T006 [P] Create `docker-compose.yml` with `db` (postgres:15-alpine, healthcheck), `minio` (healthcheck, bucket bootstrap), `web` (Dockerfile at `apps/web/Dockerfile`)
+- [X] T007 [P] Create `.env.example` (DATABASE_URL, S3_ENDPOINT/KEY/SECRET/BUCKET, APP_BASE_URL, WEB_IDLE_MINUTES=60, MOBILE_SESSION_DAYS=30) and add `.env` to `.gitignore` check
+- [X] T008 [P] Create CI workflow `.github/workflows/ci.yml`: install, typecheck, lint, unit+contract tests with a postgres service, Playwright e2e
 
 ---
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
-- [ ] T009 Configure Drizzle in `apps/web/drizzle.config.ts` and DB client `apps/web/db/client.ts`; migration runner `apps/web/db/migrate.ts`
-- [ ] T010 Define tables from data-model.md in `apps/web/db/schema.ts`: users, user_roles (partial unique for super_admin), sessions, sign_in_attempts, audit_entries, number_sequences, mobile_version_settings, system_heartbeats; generate first migration in `apps/web/db/migrations/`
-- [ ] T011 Add migration granting the app role INSERT/SELECT only on `audit_entries` in `apps/web/db/migrations/0001_audit_append_only.sql`
-- [ ] T012 [P] Shared error contract (codes from contracts/api-v1.md) in `packages/shared/src/contracts/errors.ts`
-- [ ] T013 [P] HTTP helpers (error responses, request context with client platform/version/IP) in `apps/web/server/http/`
-- [ ] T014 [P] Integration test harness: fresh schema per test file, factories, in `apps/web/tests/setup.ts` and `apps/web/vitest.config.ts`
-- [ ] T015 [P] String catalogue + `t()` in `packages/shared/src/i18n/en.ts` and `packages/shared/src/i18n/index.ts`
-- [ ] T016 Audit writer `writeAudit(tx, entry)` in `apps/web/server/audit/write.ts` (never stores passwords/tokens)
-- [ ] T017 [P] Structured JSON logger in `apps/web/server/http/logger.ts`
+- [X] T009 Configure Drizzle in `apps/web/drizzle.config.ts` and DB client `apps/web/db/client.ts`; migration runner `apps/web/db/migrate.ts`
+- [X] T010 Define tables from data-model.md in `apps/web/db/schema.ts`: users, user_roles (partial unique for super_admin), sessions, sign_in_attempts, audit_entries, number_sequences, mobile_version_settings, system_heartbeats; generate first migration in `apps/web/db/migrations/`
+- [X] T011 Make `audit_entries` append-only (implemented as a BEFORE UPDATE OR DELETE trigger in `apps/web/db/migrations/0000_init.sql`, which holds for every role including the owner)
+- [X] T012 [P] Shared error contract (codes from contracts/api-v1.md) in `packages/shared/src/contracts/errors.ts`
+- [X] T013 [P] HTTP helpers (error responses, request context with client platform/version/IP) in `apps/web/server/http/`
+- [X] T014 [P] Integration test harness: fresh schema per test file, factories, in `apps/web/tests/setup.ts` and `apps/web/vitest.config.ts`
+- [X] T015 [P] String catalogue + `t()` in `packages/shared/src/i18n/en.ts` and `packages/shared/src/i18n/index.ts`
+- [X] T016 Audit writer `writeAudit(tx, entry)` in `apps/web/server/audit/write.ts` (never stores passwords/tokens)
+- [X] T017 [P] Structured JSON logger in `apps/web/server/http/logger.ts`
 
 **Checkpoint**: schema migrates; harness runs an empty test.
 

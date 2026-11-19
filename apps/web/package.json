@@ -1,0 +1,38 @@
+{
+  "name": "@artoholic/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "db:migrate": "tsx db/migrate.ts",
+    "seed:super-admin": "tsx scripts/seed-super-admin.ts"
+  },
+  "dependencies": {
+    "@artoholic/shared": "*",
+    "@aws-sdk/client-s3": "^3.679.0",
+    "bcrypt": "^5.1.1",
+    "drizzle-orm": "^0.36.1",
+    "next": "14.2.35",
+    "pg": "^8.13.1",
+    "pg-boss": "^10.1.5",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "@types/bcrypt": "^5.0.2",
+    "@types/node": "^20.16.11",
+    "@types/pg": "^8.11.10",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1",
+    "dotenv": "^16.4.5",
+    "eslint-config-next": "14.2.35",
+    "tsx": "^4.19.1"
+  }
+}

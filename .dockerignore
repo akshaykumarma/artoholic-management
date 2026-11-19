@@ -1,0 +1,10 @@
+node_modules/
+.git/
+.next/
+.expo/
+*.log*
+.env*
+coverage/
+apps/mobile/
+Dockerfile*
+.dockerignore
