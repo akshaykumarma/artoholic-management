@@ -17,3 +17,6 @@ export * from './contracts/catalogue';
 export * from './contracts/stock';
 export * from './warehouses/location-code';
 export * from './contracts/warehouses';
+export * from './events/status';
+export * from './events/window';
+export * from './contracts/events';
