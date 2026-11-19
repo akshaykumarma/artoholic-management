@@ -7,6 +7,11 @@ import { EVENT_REMINDERS_JOB, runEventReminders } from './events/reminders';
 import { RESERVATION_CHECK_JOB, runReservationCheck } from './events/reservation-check';
 import { sweepWarnings, WARNINGS_SWEEP_JOB } from './events/reevaluate-warnings';
 import { COUNT_CREATE_JOB, COUNT_ESCALATE_JOB, runCreateDue, runEscalate } from './counts/jobs';
+import { processOutbox } from '../notifications/dispatcher';
+import { processJobs } from '../notifications/sender';
+import { purgeOldNotifications } from '../notifications/centre';
+
+const NOTIFY_PURGE_JOB = 'notifications-purge';
 
 let boss: PgBoss | undefined;
 
@@ -40,5 +45,15 @@ export async function startJobs(): Promise<void> {
   await boss.createQueue(COUNT_ESCALATE_JOB);
   await boss.work(COUNT_ESCALATE_JOB, async () => void (await runEscalate()));
   await boss.schedule(COUNT_ESCALATE_JOB, '35 1 * * *'); // 07:05 IST
+  // In-app and push within 30 s (FR-010): the outbox and delivery queue are drained every 5 s.
+  let draining = false;
+  setInterval(() => {
+    if (draining) return;
+    draining = true;
+    processOutbox().then(() => processJobs()).catch((err) => logger.error('notification delivery failed', { error: (err as Error).message })).finally(() => { draining = false; });
+  }, 5_000).unref();
+  await boss.createQueue(NOTIFY_PURGE_JOB);
+  await boss.work(NOTIFY_PURGE_JOB, async () => void (await purgeOldNotifications()));
+  await boss.schedule(NOTIFY_PURGE_JOB, '0 22 * * *'); // 03:30 IST
   logger.info('background jobs started');
 }

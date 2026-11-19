@@ -8,6 +8,7 @@ import { requireWarehouseScope } from '../auth/guards';
 import { now } from '../auth/clock';
 import { issueRecordNumber } from '../sequences/issue';
 import { postMovements, type MovementInput } from '../stock/post';
+import { emit } from '../notifications/outbox';
 import type { Authenticated } from '../auth/sessions';
 import type { RequestContext } from '../http/context';
 
@@ -203,6 +204,7 @@ export async function receiveTransfer(auth: Authenticated, id: string, input: { 
     await postMovements(tx, moves, { actorUserId: auth.user.id, ctx });
     await tx.query("UPDATE transfers SET status = 'received', received_by = $2, received_at = $3 WHERE id = $1", [id, auth.user.id, now()]);
     const after = await transferDetail(tx, id);
+    if (short.length) await emit(tx, 'transfer.shortfall', { recordType: 'transfer', recordId: id, actorUserId: auth.user.id, payload: { transferId: id, number: after.number } });
     await writeAudit(tx, { action: 'transfer.received', actorUserId: auth.user.id, entityType: 'transfer', entityId: id, after, ctx });
     return after;
   });
