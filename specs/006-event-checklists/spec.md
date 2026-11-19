@@ -21,6 +21,7 @@ PRD §5.
 ### Session 2026-11-19
 
 - Q: Can items go straight from one event to another without returning to the warehouse? (decided in 005) → A: Yes — the giving event's return dispatch hands quantities to the receiving event, which records a counted site receipt.
+- Q: When items go out or come back in several truckloads, is each truckload a separate counted checklist, or is the whole event counted once per step? → A: Once per step for the whole event (per warehouse for warehouse steps), with one set of vehicle and driver details per submission. The owner may revisit this after checking with the client.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -199,7 +200,9 @@ four steps for just those lines.
 - **FR-001** (EVT-10): Warehouse dispatch checklist as in User Story 1, moving stock Reserved → Out.
 - **FR-002** (EVT-11): Short dispatch MUST require a reason and notify Admins.
 - **FR-003** (owner decision Q8): Dispatch MUST offer optional vehicle number, driver name and
-  driver phone.
+  driver phone — one set per submission. Each step is submitted once for the whole event (per
+  warehouse for warehouse steps), not per truckload; part-way saves cover loading over several
+  trucks (clarification 2026-11-19).
 - **FR-004** (EVT-12): Site receipt checklist as in User Story 2; damaged quantities need ≥ 1
   photo and a note; missing quantity is computed and confirmed.
 - **FR-005** (EVT-13, EVT-16): Damage and missing quantities at any step MUST create a damage
@@ -263,9 +266,11 @@ four steps for just those lines.
 
 ## Assumptions
 
-- **Open (owner checking with the client, 2026-11-19):** whether a step can be submitted in
-  several truckloads, each counted and received on its own with its own vehicle and driver, or
-  only once per step for the whole event. Resolve with `/speckit-clarify` before planning 006.
+- Each step is submitted once for the whole event (per warehouse for the two warehouse steps),
+  not per truckload (owner decision, 2026-11-19, may be revisited). If several trucks are used,
+  the manager saves the table part-way as trucks are loaded or unloaded and submits once
+  everything is counted. Per-truckload submission can be added later as extra dispatch rounds
+  without changing the ledger rules.
 
 - Offline submission (queue and sync without signal) is Phase 2; in this feature drafts are kept
   on the device but submission needs a connection.

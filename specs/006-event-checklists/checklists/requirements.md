@@ -32,3 +32,4 @@
 ## Notes
 
 - Validation pass 1 (2026-11-19): all items pass. Requirements trace to PRD v1.1 IDs and owner decisions Q1–Q14; no [NEEDS CLARIFICATION] markers were needed.
+- Re-validated after /speckit-clarify (2026-11-19, 2 answers: direct handover, one submission per step): all items pass.
