@@ -15,6 +15,12 @@ the stock for the event's date window (leave-warehouse date → expected return 
 events see it as taken. If an event needs more than is available, it can still be saved, but
 everyone involved is warned. The four-step checklist that moves the items is feature 006.
 
+## Clarifications
+
+### Session 2026-11-19
+
+- Q: Can items go straight from one event's site to another event without returning to the warehouse? → A: Yes, between separate events — an Admin sources event Y's lines from event X, and X's Event Manager hands them over directly, counted at handover.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Admin creates an event and reserves its items (Priority: P1)
@@ -141,6 +147,12 @@ dispatched.
 
 ### Edge Cases
 
+- Back-to-back events at different venues (for example a sangeet then a reception): event Y's
+  lines can be sourced from event X; X's Event Manager hands them over at Y's venue, counted, and
+  only the remainder returns to the warehouse.
+- Event X is cancelled before dispatch while Y is sourced from it: Y's affected lines raise an
+  over-booking warning until the Admin picks a warehouse instead.
+
 - Event types are an Admin-editable list (initially Wedding, Engagement or Reception, Birthday or
   Private party, Corporate event, Conference or Exhibition, Concert or Cultural show, Political
   rally or Public meeting, Religious or Community function, Other).
@@ -162,8 +174,14 @@ dispatched.
   and required items.
 - **FR-002** (EVT-02): Events MUST also carry type, expected return date, site contact (name,
   phone) and notes. Client details are not captured (owner decision Q5).
-- **FR-003** (EVT-03): Each line MUST hold item, quantity (or total length) and source warehouse;
-  the platform MUST suggest a warehouse and allow splitting a line across warehouses.
+- **FR-003** (EVT-03): Each line MUST hold item, quantity (or total length) and a source — a
+  warehouse, or another event whose items will be handed over directly (FR-003a); the platform
+  MUST suggest a warehouse and allow splitting a line across sources.
+- **FR-003a**: An Admin MAY source a line from an earlier event (event X) whose end is on or
+  before this event's (event Y's) leave-warehouse date and which has that item planned. Those
+  quantities stay reserved on X, are not counted as available in any warehouse, and move from X
+  to Y by a counted site-to-site handover (006) instead of returning to the warehouse. If X's
+  dates or quantities change so the handover no longer fits, Y gets an over-booking warning.
 - **FR-004** (EVT-04): The platform MUST compute availability per item and warehouse for the
   window (leave-warehouse date → expected return date) net of other events' reservations; when a
   line exceeds it, the event MAY be saved but MUST carry an over-booking warning sent to the
@@ -190,7 +208,8 @@ dispatched.
   leave-warehouse date-time, expected return date, site contact, notes, status, over-booking state.
 - **Event assignment**: event × user × role on the event (Event Manager / Store Manager) ×
   warehouse (for Store Managers).
-- **Event line**: event, item, source warehouse, planned quantity (or length), reserved quantity;
+- **Event line**: event, item, source (warehouse, or source event for a direct handover),
+  planned quantity (or length), reserved quantity;
   006 adds dispatched, received, returned, damaged, lost, consumed.
 - **Over-booking warning**: event, line, shortfall, clashing events, raised and resolved times.
 - **Event type**: Admin-editable list.

@@ -1,5 +1,13 @@
 <!--
-Sync Impact Report
+Sync Impact Report (1.0.1)
+- Version change: 1.0.0 → 1.0.1 (PATCH: clarification only)
+- Modified principles: I. Test-First — reconciliation formula now includes quantities handed
+  over directly to another event, and principle II lists "handover" as a movement type
+  (clarification in specs 005/006, 2026-11-19). No principle
+  added, removed or redefined.
+- Templates requiring updates: none.
+
+Sync Impact Report (1.0.0)
 - Version change: (none) → 1.0.0 (initial ratification for the new Artoholic repository)
 - Modified principles: N/A (first version). Structure and governance carried over from the
   Service Management constitution v1.1.0, adapted to the Artoholic domain.
@@ -37,8 +45,8 @@ approval, physical-count variance posting, or role/permission checks MUST have a
 written and reviewed before implementation begins. Tests MUST fail first (red), then the
 implementation MUST make them pass (green), followed by refactoring with tests kept green. No
 pull request that adds or changes this behavior may merge without tests demonstrating it.
-Reconciliation rules (returned + damaged + lost + consumed = dispatched) and over-booking
-detection across overlapping event date windows MUST have explicit boundary-case tests.
+Reconciliation rules (returned + handed over + damaged + lost + consumed = dispatched) and
+over-booking detection across overlapping event date windows MUST have explicit boundary-case tests.
 
 Rationale: The platform is the system of record for every physical item Artoholic owns. A
 silent regression in a quantity rule corrupts stock that people then load onto trucks; writing
@@ -46,7 +54,7 @@ the test first forces the expected arithmetic to be stated before code exists.
 
 ### II. The Ledger Is the Source of Truth
 Stock MUST change only through append-only movement entries (receipt, dispatch, return,
-adjustment, damage, write-off, cut, transfer, correction). Every entry MUST record the item or
+adjustment, damage, write-off, cut, transfer, handover, correction). Every entry MUST record the item or
 piece, quantity, from/to location and condition, reason, actor, timestamp, and the referenced
 event, count, or transfer. Displayed quantities MUST be derived from the ledger (cached
 balances are allowed but MUST be rebuildable from it). Past entries MUST NOT be edited or
@@ -209,4 +217,4 @@ verify compliance with the principles and service levels above. Any exception MU
 with a concrete justification at the point of use (the plan's Complexity Tracking section or the
 PR description); "it's simpler this way" without a specific reason is not sufficient.
 
-**Version**: 1.0.0 | **Ratified**: 2026-11-19 | **Last Amended**: 2026-11-19
+**Version**: 1.0.1 | **Ratified**: 2026-11-19 | **Last Amended**: 2026-11-19

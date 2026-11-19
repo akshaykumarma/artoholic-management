@@ -16,6 +16,12 @@ step goes to an Admin, who reviews the photos and decides. An event closes only 
 dispatched is accounted for. This is the core of the platform; the lifecycle diagram is in
 PRD §5.
 
+## Clarifications
+
+### Session 2026-11-19
+
+- Q: Can items go straight from one event to another without returning to the warehouse? (decided in 005) → A: Yes — the giving event's return dispatch hands quantities to the receiving event, which records a counted site receipt.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Store Manager dispatches items from the warehouse (Priority: P1)
@@ -137,7 +143,7 @@ Available, 1 is a missing report, and the event becomes Reconciling.
 
 ### User Story 6 - Close the event (Priority: P1)
 
-When every line is reconciled (returned + damaged + lost + consumed = dispatched) and every damage
+When every line is reconciled (returned + handed over + damaged + lost + consumed = dispatched) and every damage
 report has a decision, an Admin closes the event. Closing locks the checklists.
 
 **Acceptance Scenarios**:
@@ -205,6 +211,12 @@ four steps for just those lines.
   stock to Available.
 - **FR-008** (EVT-17): Closure only when every line is reconciled and every report decided;
   closing locks checklists.
+- **FR-008a** (direct handover, from 005 FR-003a): For lines another event is sourced from, the
+  return dispatch MUST let the Event Manager hand quantities over to that event instead of the
+  warehouse. The receiving event's Event Manager records receipt at their site (received, damaged
+  with photos, missing confirmed) exactly like a site receipt, and that is the receiving line's
+  dispatch. The giving line counts handed-over quantity as reconciled; shortfalls create damage
+  reports on the giving event.
 - **FR-009** (EVT-20): Event status MUST advance automatically: first dispatch submitted →
   Dispatching; all dispatches → In transit; site receipt submitted → At site; return dispatch
   submitted → Returning; all warehouse receipts → Reconciling; closed → Closed.
@@ -226,8 +238,10 @@ four steps for just those lines.
 - **Checklist step**: round, step type (warehouse dispatch, site receipt, return dispatch,
   warehouse receipt), warehouse (for warehouse steps), status (not started, in progress,
   submitted), submitted by, time, app/device, GPS, transport details (dispatch).
-- **Event line** (extends 005): dispatched, received, returned, damaged, lost, consumed quantities
-  per round and warehouse; pieces for cut products.
+- **Event line** (extends 005): dispatched, received, returned, handed over, damaged, lost,
+  consumed quantities per round and source; pieces for cut products.
+- **Handover**: giving event, receiving event, lines and quantities handed over and received,
+  people, times.
 - **Damage report**: number, event, line, step, quantity, kind (damaged / missing), reason, note,
   photos, reporter, decision (pending / approved / rejected), decided by, comment, times.
 - **Photo**: storage reference, taken time, by, size, linked record, deletion due date (damage
@@ -248,6 +262,10 @@ four steps for just those lines.
 - **SC-006**: A 200-line checklist opens in under 2 seconds on a mid-range Android phone.
 
 ## Assumptions
+
+- **Open (owner checking with the client, 2026-11-19):** whether a step can be submitted in
+  several truckloads, each counted and received on its own with its own vehicle and driver, or
+  only once per step for the whole event. Resolve with `/speckit-clarify` before planning 006.
 
 - Offline submission (queue and sync without signal) is Phase 2; in this feature drafts are kept
   on the device but submission needs a connection.

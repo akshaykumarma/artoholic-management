@@ -36,7 +36,8 @@ channels, with the record number, a one-line summary and a link that opens the r
 | Dispatch or return reminder (005) | Store / Event Managers | In-app, push, WhatsApp |
 | Count due, overdue (007) | Assigned Store Managers; Admins when overdue | In-app, push, WhatsApp |
 | Count variances awaiting approval (007) | Admins | In-app, push |
-| Write-off awaiting approval, transfer shortfall (003, 004) | Admins | In-app, push |
+| Write-off or stock correction awaiting approval, transfer shortfall (003, 004) | Admins | In-app, push |
+| Direct handover to another event submitted (006) | Receiving event's Event Manager(s) | In-app, push, WhatsApp |
 | Low stock (003) | Admins | In-app, email |
 | Scheduled report ready (009) | Report recipients (Admins only, Q13) | WhatsApp (Excel document), email (attachment) |
 | Password reset code (002) | That user | WhatsApp, email |
