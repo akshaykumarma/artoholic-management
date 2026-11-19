@@ -19,6 +19,7 @@ jobs:
     env:
       DATABASE_URL: postgres://artoholic:artoholic@localhost:5432/artoholic_test
       DATABASE_URL_TEST: postgres://artoholic:artoholic@localhost:5432/artoholic_test
+      DATABASE_URL_E2E: postgres://artoholic:artoholic@localhost:5432/artoholic_test
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -29,5 +30,6 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test
+      - run: npm run build -w @artoholic/web
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e

@@ -13,6 +13,11 @@ module.exports = {
   },
   overrides: [
     {
+      files: ['apps/mobile/**/*.ts', 'apps/mobile/**/*.tsx'],
+      plugins: ['react-hooks'],
+      rules: { 'react-hooks/rules-of-hooks': 'error', 'react-hooks/exhaustive-deps': 'warn' }
+    },
+    {
       files: ['apps/web/app/**/*.tsx', 'apps/mobile/app/**/*.tsx', 'apps/web/components/**/*.tsx', 'apps/mobile/src/**/*.tsx'],
       rules: { 'react/jsx-no-literals': ['error', { noStrings: false, allowedStrings: ['·', '—', '/', ':', '(', ')', '*', '|'] }] }
     }

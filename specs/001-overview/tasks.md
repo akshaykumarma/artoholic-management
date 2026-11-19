@@ -59,7 +59,7 @@ failing before its implementation task.
 - [X] T022 [P] [US1] Contract tests for `POST /api/v1/auth/sign-in`, `POST /api/v1/auth/sign-out`, `GET /api/v1/me` in `apps/web/tests/contract/auth.test.ts`
 - [X] T023 [P] [US1] Integration test: CSRF required on web state-changing requests in `apps/web/tests/integration/csrf.test.ts`
 - [X] T024 [P] [US1] Playwright: sign-in, menu, return-to after sign-in, access-denied, sign-out in `apps/web/tests/e2e/shell.spec.ts`
-- [ ] T025 [P] [US1] jest-expo tests: sign-in screen, menu rendering, session-expired redirect with draft restore in `apps/mobile/tests/shell.test.tsx`
+- [X] T025 [P] [US1] jest-expo tests: sign-in screen, menu rendering, session-expired redirect with draft restore in `apps/mobile/tests/shell.test.tsx`
 
 ### Implementation
 
@@ -74,11 +74,11 @@ failing before its implementation task.
 - [X] T034 [US1] Route handlers `apps/web/app/api/v1/auth/sign-in/route.ts`, `apps/web/app/api/v1/auth/sign-out/route.ts`, `apps/web/app/api/v1/me/route.ts` (audit sign-in/failed/sign-out)
 - [X] T035 [US1] Super Admin seed script `apps/web/scripts/seed-super-admin.ts` (refuses if one exists)
 - [X] T036 [P] [US1] Typed API client (headers, CSRF, bearer, 401→SESSION_EXPIRED, 426 handling hook) in `packages/shared/src/api-client/index.ts`
-- [ ] T037 [P] [US1] `DraftStore` interface in `packages/shared/src/drafts/index.ts`; web implementation `apps/web/lib/drafts.ts`; mobile implementation `apps/mobile/src/drafts.ts`
+- [X] T037 [P] [US1] `DraftStore` interface in `packages/shared/src/drafts/index.ts`; web implementation `apps/web/lib/drafts.ts`; mobile implementation `apps/mobile/src/drafts.ts`
 - [X] T038 [US1] Web sign-in page `apps/web/app/(auth)/sign-in/page.tsx` with return-to
 - [X] T039 [US1] Web shell layout + role menu + home `apps/web/app/(shell)/layout.tsx`, `apps/web/app/(shell)/page.tsx`, access-denied `apps/web/app/(shell)/forbidden/page.tsx`
-- [ ] T040 [US1] Mobile secure token store `apps/mobile/src/auth/token.ts` (expo-secure-store) and session bootstrap in `apps/mobile/app/_layout.tsx`
-- [ ] T041 [US1] Mobile sign-in `apps/mobile/app/sign-in.tsx`, shell drawer `apps/mobile/app/(shell)/_layout.tsx`, home `apps/mobile/app/(shell)/index.tsx`
+- [X] T040 [US1] Mobile secure token store `apps/mobile/src/auth/token.ts` (expo-secure-store) and session bootstrap in `apps/mobile/src/auth/AuthContext.tsx`, mounted from `apps/mobile/app/_layout.tsx`
+- [X] T041 [US1] Mobile sign-in `apps/mobile/app/sign-in.tsx`, shell stack with session redirect `apps/mobile/app/(shell)/_layout.tsx`, home with the role menu `apps/mobile/app/(shell)/index.tsx` (a stack plus home menu instead of a drawer: no extra gesture/animation libraries until a feature needs them)
 
 **Checkpoint**: US1 tests green; quickstart 1–4 pass.
 
@@ -93,7 +93,7 @@ failing before its implementation task.
 
 - [X] T042 [P] [US2] Table-driven tests for every display-conventions row in `packages/shared/tests/format.test.ts`
 - [X] T043 [P] [US2] Integration test: 1,000 concurrent `issueRecordNumber` calls → 1,000 distinct consecutive numbers; rollback releases; IST year boundary in `apps/web/tests/integration/sequences.test.ts`
-- [ ] T044 [P] [US2] jest-expo snapshot of reference sample screen with device TZ forced to UTC−8 in `apps/mobile/tests/conventions.test.tsx`
+- [X] T044 [P] [US2] jest-expo snapshot of reference sample screen with device TZ forced to UTC−8 in `apps/mobile/tests/conventions.test.tsx`
 
 ### Implementation
 
@@ -103,7 +103,7 @@ failing before its implementation task.
 - [X] T048 [P] [US2] Phone display in `packages/shared/src/format/phone.ts`
 - [X] T049 [P] [US2] `formatRecordNumber(kind, year, n)` in `packages/shared/src/format/record-number.ts`
 - [X] T050 [US2] `issueRecordNumber(tx, kind)` using `INSERT … ON CONFLICT … RETURNING` in `apps/web/server/sequences/issue.ts`
-- [ ] T051 [US2] Reference sample screens (Super Admin) `apps/web/app/(shell)/reference/conventions/page.tsx` and `apps/mobile/app/(shell)/reference/conventions.tsx`
+- [X] T051 [US2] Reference sample screens (Super Admin) `apps/web/app/(shell)/reference/conventions/page.tsx` and `apps/mobile/app/(shell)/reference/conventions.tsx`
 
 **Checkpoint**: format and sequence tests green.
 
@@ -118,14 +118,14 @@ failing before its implementation task.
 
 - [X] T052 [P] [US3] Contract tests `GET /api/v1/app-version` and `PUT /api/v1/admin/mobile-versions/{platform}` (validation recommended ≥ minimum, audit) in `apps/web/tests/contract/app-version.test.ts`
 - [X] T053 [P] [US3] Integration test: middleware returns 426 `APP_UPDATE_REQUIRED` below minimum; settings cache ≤ 30 s in `apps/web/tests/integration/version-gate.test.ts`
-- [ ] T054 [P] [US3] jest-expo tests: blocking screen on launch/foreground, once-a-day prompt, offline check does not block in `apps/mobile/tests/update.test.tsx`
+- [X] T054 [P] [US3] jest-expo tests: blocking screen on launch/foreground, once-a-day prompt, offline check does not block in `apps/mobile/tests/update.test.tsx`
 
 ### Implementation
 
 - [X] T055 [P] [US3] Semver compare + schemas in `packages/shared/src/contracts/app-version.ts`
 - [X] T056 [US3] Version settings service (cached read, audited write) in `apps/web/server/versions/settings.ts`; seed `0.0.0` rows in migration
 - [X] T057 [US3] Routes `apps/web/app/api/v1/app-version/route.ts` and `apps/web/app/api/v1/admin/mobile-versions/[platform]/route.ts`; gate in the API wrapper `apps/web/server/http/handler.ts` (Next middleware runs on the edge runtime and cannot read the database)
-- [ ] T058 [US3] Mobile version check hook `apps/mobile/src/version/useVersionCheck.ts`, screen `apps/mobile/app/update-required.tsx`, recommended prompt component `apps/mobile/src/version/UpdatePrompt.tsx`
+- [X] T058 [US3] Mobile version check hook `apps/mobile/src/version/useVersionCheck.ts`; blocking screen and recommended prompt in `apps/mobile/src/version/UpdateRequired.tsx`, applied by the version gate in `apps/mobile/app/_layout.tsx` (so no other screen is reachable while blocked)
 - [X] T059 [US3] Web settings form for mobile versions in `apps/web/app/(shell)/admin/status/MobileVersionsForm.tsx`
 
 **Checkpoint**: quickstart 8–9 pass.
@@ -153,11 +153,11 @@ failing before its implementation task.
 
 ## Phase 7: Polish & Cross-Cutting
 
-- [ ] T066 [P] Accessibility pass (labels, focus, contrast WCAG 2.1 AA) on web shell pages; RN `accessibilityLabel`s on mobile shell
-- [ ] T067 [P] EAS config `apps/mobile/eas.json` with `development` and `preview` (internal distribution) profiles
-- [ ] T068 [P] Root `README.md` update: setup and scripts per quickstart
+- [X] T066 [P] Accessibility pass (labels, focus, contrast WCAG 2.1 AA) on web shell pages; RN `accessibilityLabel`s on mobile shell
+- [X] T067 [P] EAS config `apps/mobile/eas.json` with `development` and `preview` (internal distribution) profiles
+- [X] T068 [P] Root `README.md` update: setup and scripts per quickstart
 - [ ] T069 Run every quickstart scenario on web, an Android device and an iPhone; record results in `specs/001-overview/checklists/validation.md`
-- [ ] T070 Performance check: home ≤ 3 s on 4G mid-range Android (SC-008), sign-in p95 under 50 concurrent users
+- [X] T070 Performance check: API p95 under 50 concurrent users (results and the 50-simultaneous sign-in limit in `specs/001-overview/checklists/validation.md`); home ≤ 3 s on 4G mid-range Android (SC-008) is checked with T069 on a device
 
 ---
 
