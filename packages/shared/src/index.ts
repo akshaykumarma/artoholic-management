@@ -15,3 +15,5 @@ export * from './inventory/quantity';
 export * from './inventory/conditions';
 export * from './contracts/catalogue';
 export * from './contracts/stock';
+export * from './warehouses/location-code';
+export * from './contracts/warehouses';

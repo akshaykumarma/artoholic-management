@@ -49,3 +49,12 @@ export async function createUser(opts: { roles?: Role[]; username?: string; pass
   }
   return { id, username, password };
 }
+
+/** Inserts a bare warehouse (with its default location) and returns its id. */
+export async function makeWarehouseId(code?: string): Promise<string> {
+  counter += 1;
+  const c = code ?? `W${counter}${Math.floor(Math.random() * 1000)}`.slice(0, 8).toUpperCase();
+  const { rows } = await getPool().query<{ id: string }>('INSERT INTO warehouses (code, name) VALUES ($1, $1) RETURNING id', [c]);
+  await getPool().query('INSERT INTO locations (warehouse_id, code, is_default, level) VALUES ($1, $2, true, 0)', [rows[0]!.id, `${c}-DEFAULT`]);
+  return rows[0]!.id;
+}

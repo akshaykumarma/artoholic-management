@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest';
-import { randomUUID } from 'node:crypto';
 import { POST as createUser } from '../../app/api/v1/users/route';
 import { POST as deactivate } from '../../app/api/v1/users/[id]/deactivate/route';
 import { POST as reactivate } from '../../app/api/v1/users/[id]/reactivate/route';
@@ -7,6 +6,7 @@ import { PATCH as updateUser } from '../../app/api/v1/users/[id]/route';
 import { GET as me } from '../../app/api/v1/me/route';
 import { POST as signIn } from '../../app/api/v1/auth/sign-in/route';
 import { webSessionFor, mobileTokenFor } from '../session-helpers';
+import { makeWarehouseId } from '../helpers';
 import { makeReq } from '../request';
 import { getPool } from '../../db/client';
 
@@ -80,7 +80,7 @@ describe('deactivate and reactivate (002 US4)', () => {
 
   it('closes warehouse assignments history-safely when the Store Manager role is removed', async () => {
     const admin = await webSessionFor(['admin']);
-    const wh = randomUUID();
+    const wh = await makeWarehouseId();
     const u = await newUser(admin.as, { warehouseIds: [wh] });
     const res = await updateUser(
       makeReq('PATCH', `/api/v1/users/${u.id}`, { ...admin.as, headers: { 'if-match': u.updatedAt }, body: { roles: ['event_manager'] } }),

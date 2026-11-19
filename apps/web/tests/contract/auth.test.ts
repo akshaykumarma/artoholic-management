@@ -81,7 +81,7 @@ describe('GET /api/v1/me and sign-out', () => {
     const res = await me(makeReq('GET', '/api/v1/me', { cookies }));
     expect(res.status).toBe(200);
     const body = meResponseSchema.parse(await res.json());
-    expect(body.menu.map((m) => m.moduleId)).toEqual(['home', 'users', 'inventory', 'admin-status', 'conventions']);
+    expect(body.menu.map((m) => m.moduleId)).toEqual(['home', 'users', 'inventory', 'warehouses', 'admin-status', 'conventions']);
     expect(body.session.idleTimeoutMinutes).toBe(60);
   });
 
@@ -90,7 +90,7 @@ describe('GET /api/v1/me and sign-out', () => {
     const res = await signIn(makeReq('POST', '/api/v1/auth/sign-in', { platform: 'ios', body: { username: u.username, password: u.password } }));
     const { token } = await res.json();
     const body = meResponseSchema.parse(await (await me(makeReq('GET', '/api/v1/me', { platform: 'ios', bearer: token }))).json());
-    expect(body.menu.map((m) => m.moduleId)).toEqual(['home', 'users', 'inventory', 'conventions']);
+    expect(body.menu.map((m) => m.moduleId)).toEqual(['home', 'users', 'inventory', 'warehouses', 'conventions']);
     expect(body.session.idleTimeoutMinutes).toBeNull();
   });
 

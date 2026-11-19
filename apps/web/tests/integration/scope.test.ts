@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import type { Role } from '@artoholic/shared';
 import { requireWarehouseScope } from '../../server/auth/guards';
-import { createUser } from '../helpers';
+import { createUser, makeWarehouseId } from '../helpers';
 import { getPool } from '../../db/client';
 
 const auth = (id: string, roles: Role[]) => ({
@@ -20,7 +20,7 @@ describe('requireWarehouseScope', () => {
 
   it('Store Managers act only on assigned warehouses', async () => {
     const u = await createUser({ roles: ['store_manager'] });
-    const mine = randomUUID();
+    const mine = await makeWarehouseId();
     await getPool().query('INSERT INTO warehouse_assignments (user_id, warehouse_id) VALUES ($1, $2)', [u.id, mine]);
     await expect(requireWarehouseScope(auth(u.id, ['store_manager']), mine)).resolves.toBeUndefined();
     await expect(requireWarehouseScope(auth(u.id, ['store_manager']), randomUUID())).rejects.toMatchObject({ code: 'FORBIDDEN' });
@@ -28,7 +28,7 @@ describe('requireWarehouseScope', () => {
 
   it('an ended assignment no longer grants access', async () => {
     const u = await createUser({ roles: ['store_manager'] });
-    const wh = randomUUID();
+    const wh = await makeWarehouseId();
     await getPool().query('INSERT INTO warehouse_assignments (user_id, warehouse_id, unassigned_at) VALUES ($1, $2, now())', [u.id, wh]);
     await expect(requireWarehouseScope(auth(u.id, ['store_manager']), wh)).rejects.toMatchObject({ code: 'FORBIDDEN' });
   });
