@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react';
+import { router } from 'expo-router';
 import { ActivityIndicator, View } from 'react-native';
 import { Redirect, Stack, usePathname } from 'expo-router';
+import { registerForPush } from '../../src/push/register';
+import { useNotificationTaps } from '../../src/push/handle';
 import { t } from '@artoholic/shared';
 import { useAuth } from '../../src/auth/AuthContext';
 import { BiometricGate } from '../../src/auth/BiometricGate';
@@ -9,6 +12,11 @@ export default function ShellLayout() {
   const auth = useAuth();
   const path = usePathname();
   useEffect(() => auth.markLocation(path), [path]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Push: register this device once signed in; tapping a notification opens its record (008 FR-003).
+  useEffect(() => {
+    if (auth.status === 'signedIn') void registerForPush(auth.api).catch(() => undefined);
+  }, [auth.status]); // eslint-disable-line react-hooks/exhaustive-deps
+  useNotificationTaps((p) => router.push(p as never));
   if (auth.status === 'loading') {
     return (
       <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -43,6 +51,8 @@ export default function ShellLayout() {
         <Stack.Screen name="approvals/index" options={{ title: t('ck.title') }} />
         <Stack.Screen name="approvals/damage/[id]" options={{ title: t('ck.damageReports') }} />
         <Stack.Screen name="counts/index" options={{ title: t('cnt.title') }} />
+        <Stack.Screen name="notifications" options={{ title: t('ntf.title') }} />
+        <Stack.Screen name="settings/notifications" options={{ title: t('ntf.settings') }} />
         <Stack.Screen name="counts/[sessionId]" options={{ title: t('cnt.sheet') }} />
       </Stack>
     </BiometricGate>

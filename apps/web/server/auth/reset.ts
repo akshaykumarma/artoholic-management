@@ -8,7 +8,9 @@ import { hashPassword } from './password';
 import { assertPasswordAllowed } from './policy';
 import { revokeUserSessions } from './sessions';
 import { now } from './clock';
-import { sendMessage, type Channel } from '../notifications/dev-mock';
+import { sendDirect } from '../notifications/sender';
+
+type Channel = 'whatsapp' | 'email';
 
 const CODE_TTL_MS = 10 * 60_000;
 const MAX_ATTEMPTS = 5;
@@ -60,7 +62,8 @@ export async function requestReset(identifier: string, ctx: RequestContext): Pro
     );
     const text = (c: string) => `Your Artoholic password reset code is ${c}. It expires in 10 minutes. Do not share it.`;
     for (const channel of channels) {
-      await sendMessage(tx, { channel, to: channel === 'whatsapp' ? user.phone_e164! : user.email!, body: text(code), redactedBody: text('••••••') });
+      await sendDirect(tx, { channel, to: channel === 'whatsapp' ? user.phone_e164! : user.email!, userId: user.id, trigger: 'auth.password_reset',
+        subject: 'Artoholic password reset code', text: text(code), redactedText: text('••••••'), recordType: 'user', recordId: user.id });
     }
     await writeAudit(tx, { action: 'auth.reset_requested', actorUserId: user.id, entityType: 'user', entityId: user.id, after: { channels }, ctx });
   });
