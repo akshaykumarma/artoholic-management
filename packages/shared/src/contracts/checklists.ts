@@ -159,3 +159,10 @@ export const damageReportSchema = z.object({
 export type DamageReport = z.infer<typeof damageReportSchema>;
 export const damageDecisionSchema = z.object({ comment: z.string().max(500).optional() });
 export const rejectDecisionSchema = z.object({ comment: z.string().trim().min(3).max(500) });
+
+export const myStepsSchema = z.object({
+  items: z.array(z.object({
+    stepId: z.string().uuid(), step: z.enum(STEP_TYPES), round: z.number(), warehouseCode: z.string().nullable(),
+    eventId: z.string().uuid(), eventNumber: z.string(), eventName: z.string(), leaveWarehouseAt: z.string().nullable()
+  }))
+});

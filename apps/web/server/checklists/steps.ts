@@ -315,3 +315,30 @@ export async function advanceStatus(tx: Tx, eventId: string): Promise<string> {
   }
   return current;
 }
+
+/** Steps waiting for this user: ready, not yet submitted, and theirs to perform (the checklists inbox). */
+export async function myOpenSteps(auth: Authenticated) {
+  const pool = getPool();
+  const { rows } = await pool.query<{ id: string; round_id: string; round: number; step: StepType; warehouse_id: string | null; code: string | null; event_id: string; number: string; name: string; leave: Date | null }>(
+    `SELECT s.id, s.round_id, r.round, s.step, s.warehouse_id, w.code, e.id AS event_id, e.number, e.name, e.leave_warehouse_at AS leave
+       FROM checklist_steps s JOIN dispatch_rounds r ON r.id = s.round_id JOIN events e ON e.id = r.event_id LEFT JOIN warehouses w ON w.id = s.warehouse_id
+      WHERE s.status <> 'submitted' AND e.status IN ('scheduled', 'dispatching', 'in_transit', 'at_site', 'returning', 'reconciling')
+      ORDER BY e.leave_warehouse_at NULLS LAST, e.number, r.round`
+  );
+  // Make sure scheduled events have their steps, so a dispatch shows up before anyone opens the event.
+  const { rows: missing } = await pool.query<{ id: string }>(
+    "SELECT e.id FROM events e WHERE e.status = 'scheduled' AND NOT EXISTS (SELECT 1 FROM dispatch_rounds r WHERE r.event_id = e.id)"
+  );
+  if (missing.length) {
+    for (const m of missing) await withTransaction((tx) => ensureSteps(tx, m.id));
+    return myOpenSteps(auth);
+  }
+  const out = [];
+  for (const r of rows) {
+    if (!(await canPerform(auth, { event_id: r.event_id, step: r.step, warehouse_id: r.warehouse_id }))) continue;
+    if (!(await isReady(pool, { round_id: r.round_id, step: r.step, id: r.id }))) continue;
+    out.push({ stepId: r.id, step: r.step, round: r.round, warehouseCode: r.code, eventId: r.event_id, eventNumber: r.number, eventName: r.name,
+      leaveWarehouseAt: r.leave ? new Date(r.leave).toISOString() : null });
+  }
+  return out;
+}
