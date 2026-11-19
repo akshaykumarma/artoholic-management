@@ -1,4 +1,4 @@
-import { ZodError, type ZodSchema } from 'zod';
+import { ZodError, type ZodType, type ZodTypeDef } from 'zod';
 import { ApiError, errorResponse } from './errors';
 import { getRequestContext, type RequestContext } from './context';
 import { csrfValid, CSRF_COOKIE, CSRF_HEADER } from '../auth/csrf';
@@ -54,7 +54,7 @@ export function api(fn: Fn, opts: HandlerOptions = {}) {
   };
 }
 
-export async function parseBody<T>(req: Request, schema: ZodSchema<T>): Promise<T> {
+export async function parseBody<T>(req: Request, schema: ZodType<T, ZodTypeDef, unknown>): Promise<T> {
   let raw: unknown;
   try {
     raw = await req.json();

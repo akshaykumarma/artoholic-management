@@ -4,7 +4,7 @@ import { requirePermission } from '../../server/auth/guards';
 import { ApiError } from '../../server/http/errors';
 
 const auth = (roles: Role[]) => ({
-  user: { id: 'u', fullName: 'U', username: 'u', roles },
+  user: { id: 'u', fullName: 'U', username: 'u', roles, mustChangePassword: false },
   session: { id: 's', platform: 'web' as const, expiresAt: new Date(), idleTimeoutMinutes: 60 }
 });
 

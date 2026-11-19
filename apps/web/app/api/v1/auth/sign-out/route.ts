@@ -10,7 +10,7 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export const POST = api(async (_req, ctx) => {
-  const auth = await requireSession(ctx);
+  const auth = await requireSession(ctx, { allowPasswordChange: true });
   await withTransaction(async (tx) => {
     await revokeSession(tx, auth.session.id);
     await writeAudit(tx, { action: 'auth.sign_out', actorUserId: auth.user.id, entityType: 'session', entityId: auth.session.id, ctx });

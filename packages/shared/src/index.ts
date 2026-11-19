@@ -9,3 +9,5 @@ export * from './drafts';
 export * from './format';
 export * from './contracts/app-version';
 export * from './contracts/admin-status';
+export * from './contracts/users';
+export * from './auth/password-policy';

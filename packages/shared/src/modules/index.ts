@@ -17,7 +17,7 @@ const ALL_APPS = ['web', 'android', 'ios'] as const;
 /** The module map from specs/001-overview/spec.md. A module appears in menus only once shipped. */
 export const MODULES: readonly ModuleDef[] = [
   { id: 'home', labelKey: 'module.home', path: '/', roles: ROLES, apps: ALL_APPS, shipped: true, deliveredIn: '001' },
-  { id: 'users', labelKey: 'module.users', path: '/users', roles: ['super_admin', 'admin'], apps: ALL_APPS, shipped: false, deliveredIn: '002' },
+  { id: 'users', labelKey: 'module.users', path: '/users', roles: ['super_admin', 'admin'], apps: ALL_APPS, shipped: true, deliveredIn: '002' },
   { id: 'inventory', labelKey: 'module.inventory', path: '/inventory', roles: ROLES, apps: ALL_APPS, shipped: false, deliveredIn: '003' },
   { id: 'warehouses', labelKey: 'module.warehouses', path: '/warehouses', roles: ['super_admin', 'admin', 'store_manager'], apps: ALL_APPS, shipped: false, deliveredIn: '004' },
   { id: 'events', labelKey: 'module.events', path: '/events', roles: ROLES, apps: ALL_APPS, shipped: false, deliveredIn: '005' },

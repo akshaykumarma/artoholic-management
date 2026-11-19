@@ -7,7 +7,7 @@ export class ApiError extends Error {
     public readonly details?: Record<string, unknown>,
     message?: string
   ) {
-    super(message ?? t(`error.${code}` as MessageKey));
+    super(message ?? t(`error.${code}` as MessageKey, details as Record<string, string> | undefined));
   }
   get status(): number {
     return ERROR_STATUS[this.code];

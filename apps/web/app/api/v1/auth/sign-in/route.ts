@@ -10,8 +10,8 @@ export const dynamic = 'force-dynamic';
 
 export const POST = api(
   async (req, ctx) => {
-    const { username, password } = await parseBody(req, signInRequestSchema);
-    const { token, auth } = await signIn(username, password, ctx);
+    const { identifier, password } = await parseBody(req, signInRequestSchema);
+    const { token, auth } = await signIn(identifier, password, ctx);
     const user = buildMe(auth, ctx.platform);
     if (ctx.platform !== 'web') {
       return Response.json({ user, token, expiresAt: auth.session.expiresAt.toISOString() });

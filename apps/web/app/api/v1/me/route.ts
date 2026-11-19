@@ -6,6 +6,6 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export const GET = api(async (_req, ctx) => {
-  const auth = await requireSession(ctx);
+  const auth = await requireSession(ctx, { allowPasswordChange: true });
   return Response.json(buildMe(auth, ctx.platform));
 });
