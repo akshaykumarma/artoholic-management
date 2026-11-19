@@ -12,6 +12,8 @@ const NIL = '00000000-0000-0000-0000-000000000000';
 export interface Side {
   locationId?: string | null;
   eventId?: string | null;
+  /** In-transit stock belongs to a transfer, not a warehouse (004). */
+  transferId?: string | null;
   condition: Condition;
 }
 
@@ -36,10 +38,11 @@ interface Key {
   pieceId: string | null;
   locationId: string | null;
   eventId: string | null;
+  transferId: string | null;
   condition: Condition;
 }
 
-const keyString = (k: Key) => [k.itemId, k.pieceId ?? NIL, k.locationId ?? NIL, k.eventId ?? NIL, k.condition].join('|');
+const keyString = (k: Key) => [k.itemId, k.pieceId ?? NIL, k.locationId ?? NIL, k.eventId ?? NIL, k.transferId ?? NIL, k.condition].join('|');
 
 /**
  * The only writer of stock_movements and stock_balances (constitution II, research R1–R2).
@@ -76,8 +79,23 @@ export async function postMovements(
     const qd = new Decimal(m.quantity);
     const fromPiece = m.fromPieceId ?? m.pieceId ?? null;
     const toPiece = m.toPieceId ?? m.pieceId ?? null;
-    if (m.from) add({ itemId: m.itemId, pieceId: fromPiece, locationId: m.from.locationId ?? null, eventId: m.from.eventId ?? null, condition: m.from.condition }, qd.neg());
-    if (m.to) add({ itemId: m.itemId, pieceId: toPiece, locationId: m.to.locationId ?? null, eventId: m.to.eventId ?? null, condition: m.to.condition }, qd);
+    if (m.from) add({ itemId: m.itemId, pieceId: fromPiece, locationId: m.from.locationId ?? null, eventId: m.from.eventId ?? null, transferId: m.from.transferId ?? null, condition: m.from.condition }, qd.neg());
+    if (m.to) add({ itemId: m.itemId, pieceId: toPiece, locationId: m.to.locationId ?? null, eventId: m.to.eventId ?? null, transferId: m.to.transferId ?? null, condition: m.to.condition }, qd);
+  }
+
+  // Only bins hold stock (004): once a warehouse has bins, its default location takes no new stock.
+  const destinations = [...new Set(movements.map((m) => m.to?.locationId).filter((x): x is string => !!x))];
+  if (destinations.length) {
+    const { rows: bad } = await tx.query<{ id: string; code: string }>(
+      `SELECT l.id, l.code FROM locations l
+        WHERE l.id = ANY($1::uuid[]) AND (
+          l.status <> 'active'
+          OR (l.is_default AND EXISTS (SELECT 1 FROM locations b WHERE b.warehouse_id = l.warehouse_id AND b.level > 0))
+          OR (NOT l.is_default AND l.level <> (SELECT count(*) FROM warehouse_levels wl WHERE wl.warehouse_id = l.warehouse_id))
+        )`,
+      [destinations]
+    );
+    if (bad[0]) throw new ApiError('NOT_A_BIN', { locationId: bad[0].id, code: bad[0].code });
   }
 
   const availableDelta = new Map<string, Decimal>();
@@ -85,16 +103,16 @@ export async function postMovements(
     const { key, delta } = deltas.get(s)!;
     if (delta.isZero()) continue;
     await tx.query(
-      `INSERT INTO stock_balances (item_id, piece_id, location_id, event_id, condition, quantity) VALUES ($1, $2, $3, $4, $5, 0)
-       ON CONFLICT (item_id, COALESCE(piece_id, '${NIL}'), COALESCE(location_id, '${NIL}'), COALESCE(event_id, '${NIL}'), condition) DO NOTHING`,
-      [key.itemId, key.pieceId, key.locationId, key.eventId, key.condition]
+      `INSERT INTO stock_balances (item_id, piece_id, location_id, event_id, transfer_id, condition, quantity) VALUES ($1, $2, $3, $4, $5, $6, 0)
+       ON CONFLICT (item_id, COALESCE(piece_id, '${NIL}'), COALESCE(location_id, '${NIL}'), COALESCE(event_id, '${NIL}'), COALESCE(transfer_id, '${NIL}'), condition) DO NOTHING`,
+      [key.itemId, key.pieceId, key.locationId, key.eventId, key.transferId, key.condition]
     );
     const { rows } = await tx.query<{ id: string; quantity: string }>(
       `SELECT id, quantity::text FROM stock_balances
         WHERE item_id = $1 AND COALESCE(piece_id, '${NIL}') = COALESCE($2::uuid, '${NIL}') AND COALESCE(location_id, '${NIL}') = COALESCE($3::uuid, '${NIL}')
-          AND COALESCE(event_id, '${NIL}') = COALESCE($4::uuid, '${NIL}') AND condition = $5
+          AND COALESCE(event_id, '${NIL}') = COALESCE($4::uuid, '${NIL}') AND COALESCE(transfer_id, '${NIL}') = COALESCE($5::uuid, '${NIL}') AND condition = $6
         FOR UPDATE`,
-      [key.itemId, key.pieceId, key.locationId, key.eventId, key.condition]
+      [key.itemId, key.pieceId, key.locationId, key.eventId, key.transferId, key.condition]
     );
     const row = rows[0]!;
     const next = new Decimal(row.quantity).add(delta);
@@ -113,14 +131,15 @@ export async function postMovements(
   for (const m of movements) {
     const { rows } = await tx.query<{ id: string }>(
       `INSERT INTO stock_movements (type, item_id, from_piece_id, to_piece_id, quantity, from_location_id, from_event_id, from_condition,
-         to_location_id, to_event_id, to_condition, reference_type, reference_id, corrects_movement_id, reason, actor_user_id, occurred_at, client_platform)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18) RETURNING id`,
+         to_location_id, to_event_id, to_condition, reference_type, reference_id, corrects_movement_id, reason, actor_user_id, occurred_at, client_platform,
+         from_transfer_id, to_transfer_id)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20) RETURNING id`,
       [
         m.type, m.itemId, m.from ? m.fromPieceId ?? m.pieceId ?? null : null, m.to ? m.toPieceId ?? m.pieceId ?? null : null, m.quantity,
         m.from?.locationId ?? null, m.from?.eventId ?? null, m.from?.condition ?? null,
         m.to?.locationId ?? null, m.to?.eventId ?? null, m.to?.condition ?? null,
         m.reference?.type ?? null, m.reference?.id ?? null, m.correctsMovementId ?? null, m.reason ?? null,
-        meta.actorUserId, at, meta.ctx?.platform ?? null
+        meta.actorUserId, at, meta.ctx?.platform ?? null, m.from?.transferId ?? null, m.to?.transferId ?? null
       ]
     );
     ids.push(Number(rows[0]!.id));
