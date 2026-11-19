@@ -39,3 +39,9 @@ export async function warehouseOfLocation(locationId: string): Promise<string> {
   if (!rows[0]) throw new ApiError('NOT_FOUND', { locationId });
   return rows[0].warehouse_id;
 }
+
+/** Any active warehouse, for choosing a transfer destination (Store Managers may send anywhere). */
+export async function listActiveWarehouses(): Promise<Warehouse[]> {
+  const { rows } = await getPool().query<Row>(`${SELECT} WHERE w.status = 'active' ORDER BY w.code`);
+  return rows.map(map);
+}

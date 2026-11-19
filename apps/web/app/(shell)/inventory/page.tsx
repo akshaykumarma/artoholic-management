@@ -17,7 +17,7 @@ export default async function InventoryPage({ searchParams }: { searchParams: { 
         {can(auth, 'catalogue.manage') ? <Link href="/inventory/new">{t('inv.newItem')}</Link> : null}
         {can(auth, 'catalogue.manage') ? <Link href="/inventory/categories">{`${t('inv.categories')} · ${t('inv.units')}`}</Link> : null}
         {can(auth, 'catalogue.manage') ? <Link href="/inventory/import">{t('inv.import')}</Link> : null}
-        {can(auth, 'stock.view') ? <Link href="/inventory/warehouses">{t('inv.warehouses')}</Link> : null}
+        {can(auth, 'stock.view') ? <Link href="/warehouses">{t('inv.warehouses')}</Link> : null}
         {can(auth, 'stock.approve') ? <Link href="/inventory/approvals">{t('inv.approvals')}</Link> : null}
       </p>
       <form method="get" role="search" style={{ display: 'flex', gap: 8, alignItems: 'end', flexWrap: 'wrap' }}>

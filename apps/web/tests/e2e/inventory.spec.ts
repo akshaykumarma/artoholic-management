@@ -12,7 +12,7 @@ test('catalogue → opening stock → correction (003 quickstart 1, 4)', async (
   await page.getByRole('button', { name: 'Add' }).click();
   await expect(page.getByText('Furniture').first()).toBeVisible();
 
-  await page.goto('/inventory/warehouses', { waitUntil: 'networkidle' });
+  await page.goto('/warehouses', { waitUntil: 'networkidle' });
   await page.getByLabel('Code').fill('MAIN');
   await page.getByLabel('Name').fill('Main warehouse');
   await page.getByRole('button', { name: 'Add' }).click();

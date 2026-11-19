@@ -72,7 +72,8 @@ export function createApiClient(o: ApiClientOptions) {
     request,
     get: <T>(path: string, schema?: ZodType<T>) => request<T>('GET', path, { schema }),
     post: <T>(path: string, body?: unknown, schema?: ZodType<T>) => request<T>('POST', path, { body, schema }),
-    put: <T>(path: string, body?: unknown, schema?: ZodType<T>) => request<T>('PUT', path, { body, schema })
+    put: <T>(path: string, body?: unknown, schema?: ZodType<T>) => request<T>('PUT', path, { body, schema }),
+    patch: <T>(path: string, body?: unknown, schema?: ZodType<T>) => request<T>('PATCH', path, { body, schema })
   };
 }
 
