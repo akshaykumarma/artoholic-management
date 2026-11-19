@@ -36,6 +36,9 @@ export default function ShellLayout() {
         <Stack.Screen name="warehouses/move" options={{ title: t('wh.move') }} />
         <Stack.Screen name="warehouses/transfers/index" options={{ title: t('tr.title') }} />
         <Stack.Screen name="warehouses/transfers/[id]" options={{ title: t('tr.title') }} />
+        <Stack.Screen name="events/index" options={{ title: t('ev.title') }} />
+        <Stack.Screen name="events/today" options={{ title: t('ev.today') }} />
+        <Stack.Screen name="events/[id]" options={{ title: t('ev.title') }} />
       </Stack>
     </BiometricGate>
   );

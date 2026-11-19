@@ -144,3 +144,6 @@ export type AvailabilityResult = z.infer<typeof availabilityResultSchema>;
 export const cancelEventSchema = z.object({ reason: z.string().trim().min(3).max(500) });
 export const eventTypeSchema = z.object({ id: z.string().uuid(), name: z.string(), status: z.enum(['active', 'archived']) });
 export const eventTypeInputSchema = z.object({ name: z.string().trim().min(1).max(60), status: z.enum(['active', 'archived']).optional() });
+
+export const todaySchema = z.object({ date: z.string(), dispatches: z.array(eventRowSchema), returns: z.array(eventRowSchema) });
+export type TodayView = z.infer<typeof todaySchema>;
