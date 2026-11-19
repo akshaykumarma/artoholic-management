@@ -1,6 +1,7 @@
 /** English string catalogue. Every user-facing string lives here (FR-016). */
 export const en = {
   'app.name': 'Artoholic',
+  'app.tagline': 'Redefining your event through art.',
   'module.home': 'Home',
   'module.users': 'Users & roles',
   'module.inventory': 'Inventory',

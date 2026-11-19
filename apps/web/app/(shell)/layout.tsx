@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { buildMenu, t } from '@artoholic/shared';
 import { requirePageAuth } from '@/lib/server-auth';
 import SignOutButton from '@/components/SignOutButton';
+import BrandMark from '@/components/BrandMark';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,7 +13,7 @@ export default async function ShellLayout({ children }: { children: ReactNode })
   return (
     <div className="shell">
       <nav className="nav" aria-label="Main">
-        <h1>{t('app.name')}</h1>
+        <BrandMark />
         <ul>
           {menu.map((m) => (
             <li key={m.moduleId}>

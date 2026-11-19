@@ -1,9 +1,11 @@
 import { getPool } from '../db/client';
+import { clearVersionCache } from '../server/versions/settings';
 
 const KEEP = new Set(['schema_migrations']);
 
 /** Empties every table and re-seeds reference rows, so each test starts clean. */
 export async function resetData(): Promise<void> {
+  clearVersionCache();
   const pool = getPool();
   const { rows } = await pool.query<{ tablename: string }>(
     "SELECT tablename FROM pg_tables WHERE schemaname = 'public'"

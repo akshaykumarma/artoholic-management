@@ -7,3 +7,5 @@ export * from './modules';
 export * from './api-client';
 export * from './drafts';
 export * from './format';
+export * from './contracts/app-version';
+export * from './contracts/admin-status';

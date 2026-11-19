@@ -4,12 +4,16 @@ import { getRequestContext, type RequestContext } from './context';
 import { csrfValid, CSRF_COOKIE, CSRF_HEADER } from '../auth/csrf';
 import { SESSION_COOKIE } from '../auth/cookies';
 import { logger } from './logger';
+import { compareVersions } from '@artoholic/shared';
+import { getVersionSettings } from '../versions/settings';
 
 const STATE_CHANGING = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
 export interface HandlerOptions {
   /** Skip CSRF for endpoints used before a session exists (sign-in). */
   csrfExempt?: boolean;
+  /** Skip the mobile minimum-version gate (the version-check endpoint itself). */
+  versionGateExempt?: boolean;
 }
 
 type Fn = (req: Request, ctx: RequestContext, params: Record<string, string>) => Promise<Response>;
@@ -22,6 +26,12 @@ export function api(fn: Fn, opts: HandlerOptions = {}) {
   return async (req: Request, route?: { params?: Record<string, string> }): Promise<Response> => {
     const ctx = getRequestContext(req);
     try {
+      if (!opts.versionGateExempt && ctx.platform !== 'web') {
+        const s = await getVersionSettings(ctx.platform);
+        if (compareVersions(ctx.version, s.minimumVersion) < 0) {
+          throw new ApiError('APP_UPDATE_REQUIRED', { minimumVersion: s.minimumVersion, storeUrl: s.storeUrl });
+        }
+      }
       if (
         !opts.csrfExempt &&
         STATE_CHANGING.has(req.method) &&
