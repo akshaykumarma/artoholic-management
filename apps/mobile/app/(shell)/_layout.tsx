@@ -52,6 +52,8 @@ export default function ShellLayout() {
         <Stack.Screen name="approvals/damage/[id]" options={{ title: t('ck.damageReports') }} />
         <Stack.Screen name="counts/index" options={{ title: t('cnt.title') }} />
         <Stack.Screen name="notifications" options={{ title: t('ntf.title') }} />
+        <Stack.Screen name="reports/index" options={{ title: t('rpt.title') }} />
+        <Stack.Screen name="reports/[reportId]" options={{ title: t('rpt.title') }} />
         <Stack.Screen name="settings/notifications" options={{ title: t('ntf.settings') }} />
         <Stack.Screen name="counts/[sessionId]" options={{ title: t('cnt.sheet') }} />
       </Stack>

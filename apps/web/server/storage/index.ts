@@ -6,6 +6,9 @@ export interface Storage {
   presignPut(key: string, contentType: string): Promise<string>;
   presignGet(key: string): Promise<string>;
   head(key: string): Promise<{ bytes: number; contentType: string } | null>;
+  /** Server-side upload and download (report files, 009). */
+  putObject(key: string, body: Buffer, contentType: string): Promise<void>;
+  getObject(key: string): Promise<Buffer | null>;
 }
 
 function s3(): S3Client {
@@ -28,19 +31,36 @@ const s3Storage: Storage = {
     } catch {
       return null;
     }
+  },
+  async putObject(key, body, contentType) {
+    await s3().send(new PutObjectCommand({ Bucket: bucket(), Key: key, Body: body, ContentType: contentType }));
+  },
+  async getObject(key) {
+    try {
+      const r = await s3().send(new GetObjectCommand({ Bucket: bucket(), Key: key }));
+      return r.Body ? Buffer.from(await r.Body.transformToByteArray()) : null;
+    } catch {
+      return null;
+    }
   }
 };
 
 /** In-memory storage: tests "upload" by calling memoryStorage.put. */
-const objects = new Map<string, { bytes: number; contentType: string }>();
+const objects = new Map<string, { bytes: number; contentType: string; body?: Buffer }>();
 export const memoryStorage: Storage & { put(key: string, bytes: number, contentType: string): void; clear(): void } = {
   presignPut: async (key) => `memory://put/${key}`,
   presignGet: async (key) => `memory://get/${key}`,
-  head: async (key) => objects.get(key) ?? null,
+  head: async (key) => {
+    const o = objects.get(key);
+    return o ? { bytes: o.bytes, contentType: o.contentType } : null;
+  },
+  putObject: async (key, body, contentType) => void objects.set(key, { bytes: body.length, contentType, body }),
+  getObject: async (key) => objects.get(key)?.body ?? null,
   put: (key, bytes, contentType) => void objects.set(key, { bytes, contentType }),
   clear: () => objects.clear()
 };
 
 export function getStorage(): Storage {
-  return process.env.NODE_ENV === 'test' ? memoryStorage : s3Storage;
+  // STORAGE_DRIVER=memory: in-process storage for e2e runs without S3 (files vanish on restart; never in production).
+  return process.env.NODE_ENV === 'test' || process.env.STORAGE_DRIVER === 'memory' ? memoryStorage : s3Storage;
 }

@@ -10,6 +10,9 @@ import { COUNT_CREATE_JOB, COUNT_ESCALATE_JOB, runCreateDue, runEscalate } from 
 import { processOutbox } from '../notifications/dispatcher';
 import { processJobs } from '../notifications/sender';
 import { purgeOldNotifications } from '../notifications/centre';
+import { runDueSchedules } from '../reports/schedules';
+
+const REPORTS_JOB = 'reports-run-due';
 
 const NOTIFY_PURGE_JOB = 'notifications-purge';
 
@@ -55,5 +58,8 @@ export async function startJobs(): Promise<void> {
   await boss.createQueue(NOTIFY_PURGE_JOB);
   await boss.work(NOTIFY_PURGE_JOB, async () => void (await purgeOldNotifications()));
   await boss.schedule(NOTIFY_PURGE_JOB, '0 22 * * *'); // 03:30 IST
+  await boss.createQueue(REPORTS_JOB);
+  await boss.work(REPORTS_JOB, async () => void (await runDueSchedules()));
+  await boss.schedule(REPORTS_JOB, '* * * * *');
   logger.info('background jobs started');
 }

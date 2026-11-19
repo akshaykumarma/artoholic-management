@@ -96,15 +96,16 @@ export async function processOutbox(limit = 200): Promise<number> {
           const mapping = map[0] ?? null;
           const msg = renderMessage(mapping, o.payload, view);
           const skipped = ch === 'whatsapp' && !mapping;
+          const file = typeof o.payload.fileKey === 'string' ? { name: String(o.payload.fileName ?? 'report.xlsx'), size: Number(o.payload.fileBytes ?? 0), key: o.payload.fileKey } : null;
           const { rows: m } = await tx.query<{ id: string }>(
-            `INSERT INTO messages (channel, to_address, user_id, trigger, template_name, language, rendered_text, record_type, record_id, queued_at, status)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`,
-            [ch, to, userId, o.trigger, mapping?.template_name ?? null, mapping?.language ?? null, redact(o.trigger, msg.text), o.record_type, o.record_id, at, skipped ? 'skipped' : 'queued']
+            `INSERT INTO messages (channel, to_address, user_id, trigger, template_name, language, rendered_text, attachments, record_type, record_id, queued_at, status)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id`,
+            [ch, to, userId, o.trigger, mapping?.template_name ?? null, mapping?.language ?? null, redact(o.trigger, msg.text), JSON.stringify(file ? [file] : []), o.record_type, o.record_id, at, skipped ? 'skipped' : 'queued']
           );
           await tx.query('INSERT INTO message_events (message_id, status, detail, at) VALUES ($1, $2, $3, $4)', [m[0]!.id, skipped ? 'skipped' : 'queued', skipped ? 'no template' : null, at]);
           if (skipped) continue;
           await tx.query('INSERT INTO channel_jobs (channel, user_id, message_id, notification_id, payload, send_after) VALUES ($1, $2, $3, $4, $5, $6)',
-            [ch, userId, m[0]!.id, n[0]!.id, JSON.stringify({ subject: view.title, text: msg.text, params: msg.params }), sendAfter]);
+            [ch, userId, m[0]!.id, n[0]!.id, JSON.stringify({ subject: view.title, text: msg.text, params: msg.params, file, downloadPath: o.payload.downloadPath ?? null }), sendAfter]);
         }
       }
       await tx.query('UPDATE notification_outbox SET processed_at = $2 WHERE id = $1', [o.id, at]);

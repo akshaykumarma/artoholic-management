@@ -36,3 +36,8 @@ jest.mock('expo-notifications', () => ({
   addNotificationResponseReceivedListener: jest.fn(() => ({ remove: jest.fn() })),
   addNotificationReceivedListener: jest.fn(() => ({ remove: jest.fn() }))
 }));
+jest.mock('expo-file-system', () => ({
+  cacheDirectory: 'file:///cache/',
+  downloadAsync: jest.fn(async (_url: string, uri: string) => ({ uri, status: 200, headers: {} }))
+}));
+jest.mock('expo-sharing', () => ({ isAvailableAsync: jest.fn(async () => true), shareAsync: jest.fn(async () => undefined) }));
