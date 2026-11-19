@@ -11,3 +11,7 @@ export * from './contracts/app-version';
 export * from './contracts/admin-status';
 export * from './contracts/users';
 export * from './auth/password-policy';
+export * from './inventory/quantity';
+export * from './inventory/conditions';
+export * from './contracts/catalogue';
+export * from './contracts/stock';

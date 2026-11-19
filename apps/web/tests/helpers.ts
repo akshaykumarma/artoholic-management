@@ -18,6 +18,9 @@ export async function resetData(): Promise<void> {
   await pool.query(`INSERT INTO mobile_version_settings (platform, minimum_version, recommended_version, store_url) VALUES
     ('android', '0.0.0', '0.0.0', 'https://play.google.com/store/apps/details?id=in.artoholic.ops'),
     ('ios', '0.0.0', '0.0.0', 'https://apps.apple.com/')`);
+  await pool.query(`INSERT INTO units (code, name, family, factor_to_base) VALUES
+    ('m', 'metre', 'length', 1), ('cm', 'centimetre', 'length', 0.01), ('mm', 'millimetre', 'length', 0.001), ('ft', 'foot', 'length', 0.3048),
+    ('kg', 'kilogram', 'mass', 1), ('g', 'gram', 'mass', 0.001), ('l', 'litre', 'volume', 1), ('ml', 'millilitre', 'volume', 0.001)`);
 }
 
 import { hashPassword } from '../server/auth/password';
