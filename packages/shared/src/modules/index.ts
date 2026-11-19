@@ -20,7 +20,7 @@ export const MODULES: readonly ModuleDef[] = [
   { id: 'users', labelKey: 'module.users', path: '/users', roles: ['super_admin', 'admin'], apps: ALL_APPS, shipped: true, deliveredIn: '002' },
   { id: 'inventory', labelKey: 'module.inventory', path: '/inventory', roles: ROLES, apps: ALL_APPS, shipped: true, deliveredIn: '003' },
   { id: 'warehouses', labelKey: 'module.warehouses', path: '/warehouses', roles: ['super_admin', 'admin', 'store_manager'], apps: ALL_APPS, shipped: true, deliveredIn: '004' },
-  { id: 'events', labelKey: 'module.events', path: '/events', roles: ROLES, apps: ALL_APPS, shipped: false, deliveredIn: '005' },
+  { id: 'events', labelKey: 'module.events', path: '/events', roles: ROLES, apps: ALL_APPS, shipped: true, deliveredIn: '005' },
   { id: 'checklists', labelKey: 'module.checklists', path: '/approvals', roles: ROLES, apps: ALL_APPS, shipped: false, deliveredIn: '006' },
   { id: 'counts', labelKey: 'module.counts', path: '/counts', roles: ['super_admin', 'admin', 'store_manager'], apps: ALL_APPS, shipped: false, deliveredIn: '007' },
   { id: 'notifications', labelKey: 'module.notifications', path: '/notifications', roles: ROLES, apps: ALL_APPS, shipped: false, deliveredIn: '008' },

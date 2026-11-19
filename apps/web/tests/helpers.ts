@@ -21,6 +21,7 @@ export async function resetData(): Promise<void> {
   await pool.query(`INSERT INTO units (code, name, family, factor_to_base) VALUES
     ('m', 'metre', 'length', 1), ('cm', 'centimetre', 'length', 0.01), ('mm', 'millimetre', 'length', 0.001), ('ft', 'foot', 'length', 0.3048),
     ('kg', 'kilogram', 'mass', 1), ('g', 'gram', 'mass', 0.001), ('l', 'litre', 'volume', 1), ('ml', 'millilitre', 'volume', 0.001)`);
+  await pool.query(`INSERT INTO event_types (name, position) VALUES ('Wedding', 1), ('Corporate event', 2), ('Political rally or Public meeting', 3), ('Other', 4)`);
 }
 
 import { hashPassword } from '../server/auth/password';
