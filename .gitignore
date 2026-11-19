@@ -4,28 +4,23 @@
 # Dependencies
 node_modules/
 
-# Next.js build output
+# Build output
 .next/
 out/
-
-# Production build
 build/
 dist/
+.expo/
+*.tsbuildinfo
+next-env.d.ts
 
-# Environment variables
+# Environment
 .env
 .env.test
 .env*.local
 
-# Logs
+# Logs and test output
 *.log
 npm-debug.log*
-
-# TypeScript
-*.tsbuildinfo
-next-env.d.ts
-
-# Testing
 coverage/
 playwright-report/
 test-results/
@@ -36,3 +31,4 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+*.tmp

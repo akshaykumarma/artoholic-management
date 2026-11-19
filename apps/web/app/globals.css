@@ -1,0 +1,32 @@
+/* Brand: slate #4A5055 and saffron #EBAB3F from the Artoholic logo. Saffron is for highlights only (white text on it fails contrast). */
+:root { --ink: #2b2f32; --muted: #5f666b; --line: #e3e3e6; --brand: #4a5055; --saffron: #ebab3f; --accent: #4a5055; --bg: #fafafa; --ok: #1f8f4e; --down: #c0362c; --warn: #b7791f; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; color: var(--ink); background: var(--bg); }
+a { color: var(--accent); }
+.shell { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+.nav { background: #fff; border-right: 1px solid var(--line); padding: 16px; }
+.nav h1 { font-size: 18px; margin: 0 0 16px; }
+.nav ul { list-style: none; padding: 0; margin: 0; }
+.nav li a { display: block; padding: 10px 8px; border-radius: 8px; text-decoration: none; color: var(--ink); min-height: 44px; }
+.nav li a:hover, .nav li a:focus { background: #fdf3e1; outline: 2px solid var(--saffron); outline-offset: -2px; }
+.main { padding: 24px; max-width: 960px; }
+.card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+.auth { display: grid; place-items: center; min-height: 100vh; padding: 16px; }
+.auth form { width: 100%; max-width: 360px; }
+label { display: block; font-weight: 600; margin: 12px 0 4px; }
+input { width: 100%; padding: 10px 12px; font-size: 16px; border: 1px solid var(--line); border-radius: 8px; min-height: 44px; }
+button { margin-top: 16px; min-height: 44px; padding: 10px 16px; font-size: 16px; border: 0; border-radius: 8px; background: var(--accent); color: #fff; cursor: pointer; }
+button.secondary { background: #fff; color: var(--ink); border: 1px solid var(--line); }
+.error { color: var(--down); margin-top: 12px; }
+.muted { color: var(--muted); }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 13px; font-weight: 600; }
+.badge.ok { background: #e3f4ea; color: var(--ok); }
+.badge.down { background: #fbe6e4; color: var(--down); }
+.badge.degraded { background: #fbf0dc; color: var(--warn); }
+@media (max-width: 720px) { .shell { grid-template-columns: 1fr; } .nav { border-right: 0; border-bottom: 1px solid var(--line); } }
+.brand { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.brand-mark { width: 28px; height: 28px; border-radius: 50%; background: var(--saffron); box-shadow: 0 0 0 4px var(--brand); flex: none; }
+.brand-name { font-size: 22px; font-weight: 700; letter-spacing: 0.5px; color: var(--brand); text-transform: lowercase; }
+.tagline { font-style: italic; color: var(--muted); font-size: 13px; margin: 0 0 16px; }
