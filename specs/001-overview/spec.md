@@ -352,8 +352,9 @@ show "OK"; stop file storage and confirm it shows "Down" within one minute while
   refused, including attempts that bypass the menu.
 - **SC-005**: An app below the minimum supported version shows "Update required" within 3 seconds
   of opening, and no work screen is reachable from it.
-- **SC-006**: A failure of any essential part shows as "Down" on the status page within 1 minute,
-  and the public health address reports the change within the same minute.
+- **SC-006**: A failure of any essential part shows as "Down" on the status page within 1 minute;
+  when the platform as a whole cannot serve requests, the public health address reports "down"
+  within the same minute.
 - **SC-007**: Creating 1,000 records of one kind concurrently yields 1,000 distinct, consecutive
   numbers with no duplicates and no reuse.
 - **SC-008**: The home screen opens in under 3 seconds on a 4G connection on a mid-range Android
