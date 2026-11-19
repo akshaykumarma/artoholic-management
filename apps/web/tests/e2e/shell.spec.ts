@@ -19,7 +19,7 @@ test('Super Admin signs in and sees the role menu (US1-1)', async ({ page }) => 
   await signIn(page, 'owner');
   await expect(page.getByRole('heading', { name: 'Welcome, Owner' })).toBeVisible();
   const nav = page.getByRole('navigation', { name: 'Main' });
-  await expect(nav.getByRole('link')).toHaveText(['Home', 'Users & roles', 'Inventory', 'Warehouses & locations', 'Events', 'Event checklists', 'Platform status', 'Display conventions']);
+  await expect(nav.getByRole('link')).toHaveText(['Home', 'Users & roles', 'Inventory', 'Warehouses & locations', 'Events', 'Event checklists', 'Physical counts', 'Platform status', 'Display conventions']);
 });
 
 test('signed-out visitor is returned to the page they asked for (US1-5)', async ({ page }) => {
@@ -39,7 +39,7 @@ test('wrong password shows one generic message (US1-6)', async ({ page }) => {
 
 test('a user without access sees the access message, not the page (US1-4)', async ({ page }) => {
   await signInAndWait(page, 'priya');
-  await expect(page.getByRole('navigation', { name: 'Main' }).getByRole('link')).toHaveText(['Home', 'Inventory', 'Warehouses & locations', 'Events', 'Event checklists']);
+  await expect(page.getByRole('navigation', { name: 'Main' }).getByRole('link')).toHaveText(['Home', 'Inventory', 'Warehouses & locations', 'Events', 'Event checklists', 'Physical counts']);
   await page.goto('/admin/status');
   await expect(page.getByRole('heading', { name: "You don't have access to this page" })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Platform status' })).toHaveCount(0);

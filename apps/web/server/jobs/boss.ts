@@ -6,6 +6,7 @@ import { runStockRebuildCheck, STOCK_REBUILD_JOB } from './stock-rebuild-check';
 import { EVENT_REMINDERS_JOB, runEventReminders } from './events/reminders';
 import { RESERVATION_CHECK_JOB, runReservationCheck } from './events/reservation-check';
 import { sweepWarnings, WARNINGS_SWEEP_JOB } from './events/reevaluate-warnings';
+import { COUNT_CREATE_JOB, COUNT_ESCALATE_JOB, runCreateDue, runEscalate } from './counts/jobs';
 
 let boss: PgBoss | undefined;
 
@@ -33,5 +34,11 @@ export async function startJobs(): Promise<void> {
   await boss.createQueue(RESERVATION_CHECK_JOB);
   await boss.work(RESERVATION_CHECK_JOB, async () => void (await runReservationCheck()));
   await boss.schedule(RESERVATION_CHECK_JOB, '45 21 * * *'); // 03:15 IST
+  await boss.createQueue(COUNT_CREATE_JOB);
+  await boss.work(COUNT_CREATE_JOB, async () => void (await runCreateDue()));
+  await boss.schedule(COUNT_CREATE_JOB, '31 1 * * *'); // 07:01 IST
+  await boss.createQueue(COUNT_ESCALATE_JOB);
+  await boss.work(COUNT_ESCALATE_JOB, async () => void (await runEscalate()));
+  await boss.schedule(COUNT_ESCALATE_JOB, '35 1 * * *'); // 07:05 IST
   logger.info('background jobs started');
 }
