@@ -20,6 +20,13 @@ module map, the role model, the display and identifier conventions, and an app s
 person can sign in, see the menu for their roles, and be told when their mobile app is too old.
 It delivers no business module itself; modules arrive in features 002–011 (see Module Map).
 
+## Clarifications
+
+### Session 2026-11-19
+
+- Q: Should Admins be able to change an item's code after the item is created? → A: Yes — item codes are editable at any time; every change is audited and the old code still finds the item in search.
+- Q: How long can a signed-in person stay inactive before being signed out? → A: Web signs out after 60 minutes without activity; mobile stays signed in for up to 30 days unless the person signs out or is deactivated.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Sign in and land on a role-aware home screen (Priority: P1)
@@ -157,7 +164,13 @@ show "OK"; stop file storage and confirm it shows "Down" within one minute while
   the year in IST, not UTC, so an event created at 00:30 IST on 1 January 2027 gets `EVT-2027-…`.
 - Two records of the same kind are created at the same instant: each still gets a unique,
   consecutive number with no gaps caused by the clash, and no number is ever reused.
+- An Admin changes item code `ITM-00001` to `CHR-WHITE-01`: searching for either code finds the
+  item; a different item can never later take `ITM-00001`; reports show the current code.
 - A negative amount (a correction) is shown as "−₹1,200.00"; zero as "₹0.00".
+- A web user is inactive for 60 minutes with a half-filled form: the next action asks them to
+  sign in again, then returns them to the form with their entries kept.
+- A mobile user's 30-day session expires mid-event: they sign in again and their unsubmitted
+  checklist entries are still there.
 - Repeated failed sign-ins: after 5 failed attempts for one account within 15 minutes, further
   attempts for that account are refused for 15 minutes, with a message saying when to try again.
 - A module entry exists in the module map but its feature has not shipped yet: it does not
@@ -185,6 +198,11 @@ show "OK"; stop file storage and confirm it shows "Down" within one minute while
 - **FR-005**: Users MUST be able to sign in with username and password on all three apps, and to
   sign out. Full user management, other sign-in identifiers, password reset, and biometric unlock
   are delivered by feature 002.
+- **FR-005a**: A web session MUST end after 60 minutes without activity, after which the next
+  action sends the person to sign-in and back to where they were. A mobile session MUST stay
+  signed in for up to 30 days from sign-in, unless the person signs out or their account is
+  deactivated. Entered but unsubmitted work MUST NOT be lost when a session ends; it is kept on
+  the device and offered again after signing back in.
 - **FR-006**: Sign-in MUST refuse further attempts for an account for 15 minutes after 5 failed
   attempts within 15 minutes, and MUST show the same generic message for a wrong username and a
   wrong password.
@@ -216,7 +234,7 @@ show "OK"; stop file storage and confirm it shows "Down" within one minute while
   one ("12.5 m", "3 kg") and as a plain number when it is counted in pieces; decimal quantities
   MUST show up to 3 decimal places without trailing zeros.
 - **FR-014**: Records that people quote to each other MUST get a human-readable number that is
-  unique, never reused, and never changed after creation, in these formats (the year is the IST
+  unique and never reused, and (except item codes) never changed after creation, in these formats (the year is the IST
   calendar year of creation; numbering restarts at 0001 each year):
 
   | Record | Format | Example | Delivered in |
@@ -225,11 +243,14 @@ show "OK"; stop file storage and confirm it shows "Down" within one minute while
   | Damage or loss report | `DMG-YYYY-NNNNN` | `DMG-2026-00001` | 006 |
   | Physical count session | `CNT-YYYY-NNNN` | `CNT-2026-0001` | 007 |
   | Stock transfer | `TRF-YYYY-NNNN` | `TRF-2026-0001` | 004 |
-  | Item | `ITM-NNNNN` (not by year; editable by Admins) | `ITM-00001` | 003 |
+  | Item | `ITM-NNNNN` by default (not by year); Admins may change it at any time | `ITM-00001` | 003 |
 
   Warehouse codes are chosen by Admins; location codes are built from the warehouse code and
   location levels (for example `MAIN-A-03-02`), as specified in feature 004. Sequences longer
   than their padding continue with more digits (`EVT-2026-10000`) rather than failing.
+  An item code change MUST keep the new code unique among all current and former item codes,
+  MUST be recorded in the audit log with the old and new code, and the item MUST remain findable
+  by every code it has ever had.
 - **FR-015**: Phone numbers MUST be stored with country code and displayed as "+91 98765 43210"
   for Indian numbers.
 - **FR-016**: All user-facing text MUST be in English and MUST be kept separate from app logic so

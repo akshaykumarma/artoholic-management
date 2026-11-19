@@ -32,6 +32,7 @@
 ## Notes
 
 - Validation pass 1 (2026-11-19): all items pass.
+- Re-validated after /speckit-clarify (2 answers integrated): all items still pass.
 - Requirements and success criteria are technology-agnostic. The only stack reference is in
   Assumptions, which points to the stack already ratified in the constitution and defers the
   repository layout to `/speckit-plan`, as the feature description asked for it to be settled
