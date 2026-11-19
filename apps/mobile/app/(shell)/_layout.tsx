@@ -39,6 +39,9 @@ export default function ShellLayout() {
         <Stack.Screen name="events/index" options={{ title: t('ev.title') }} />
         <Stack.Screen name="events/today" options={{ title: t('ev.today') }} />
         <Stack.Screen name="events/[id]" options={{ title: t('ev.title') }} />
+        <Stack.Screen name="checklist/[stepId]" options={{ title: t('ck.checklists') }} />
+        <Stack.Screen name="approvals/index" options={{ title: t('ck.title') }} />
+        <Stack.Screen name="approvals/damage/[id]" options={{ title: t('ck.damageReports') }} />
       </Stack>
     </BiometricGate>
   );

@@ -87,3 +87,25 @@ export async function syncReservations(tx: Tx, eventId: string, actorUserId: str
     await tx.query('UPDATE event_line_sources SET reserved_qty = $2 WHERE id = $1', [s.id, r.toFixed(3)]);
   }
 }
+
+/** Reserves up to `qty` of free stock in a warehouse for an event (live-event rounds, 006 US8). Returns what it reserved. */
+export async function reserveNow(tx: Tx, eventId: string, itemId: string, warehouseId: string, qty: string, actorUserId: string, ctx?: Pick<RequestContext, 'platform'>): Promise<string> {
+  let need = new Decimal(qty);
+  const { rows: free } = await tx.query<{ location_id: string; piece_id: string | null; q: string }>(
+    `SELECT b.location_id, b.piece_id, b.quantity::text AS q FROM stock_balances b JOIN locations l ON l.id = b.location_id
+      WHERE b.item_id = $1 AND l.warehouse_id = $2 AND b.condition = 'available' AND b.event_id IS NULL AND b.transfer_id IS NULL AND b.quantity > 0
+      ORDER BY l.code, b.piece_id NULLS FIRST`, [itemId, warehouseId]
+  );
+  const moves: MovementInput[] = [];
+  let got = new Decimal(0);
+  for (const f of free) {
+    if (need.lte(0)) break;
+    const take = Decimal.min(need, f.q);
+    moves.push({ type: 'reserve', itemId, pieceId: f.piece_id, quantity: take.toFixed(3), from: { locationId: f.location_id, condition: 'available' },
+      to: { locationId: f.location_id, eventId, condition: 'reserved' }, reference: { type: 'event', id: eventId } });
+    need = need.minus(take);
+    got = got.plus(take);
+  }
+  await postMovements(tx, moves, { actorUserId, ctx });
+  return got.toFixed(3);
+}

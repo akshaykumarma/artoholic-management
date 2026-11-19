@@ -4,6 +4,10 @@ import { requirePageAuth, can } from '@/lib/server-auth';
 import Forbidden from '@/components/Forbidden';
 import { getEvent } from '@/server/events/events';
 import EventActions from './EventActions';
+import LiveEventPanel from './LiveEventPanel';
+import { getRounds } from '@/server/checklists/steps';
+import { getLineTotals } from '@/server/events/closure';
+import { eventFormOptions } from '../load-options';
 
 export const dynamic = 'force-dynamic';
 
@@ -63,6 +67,11 @@ export default async function EventPage({ params }: { params: { id: string } }) 
           </tbody>
         </table>
       </section>
+      {e.status !== 'draft' && e.status !== 'cancelled' ? await (async () => {
+        const isAdmin = can(auth, 'events.manage');
+        const opts = isAdmin ? await eventFormOptions() : { items: [], warehouses: [] };
+        return <LiveEventPanel eventId={e.id} rounds={await getRounds(auth, e.id)} totals={await getLineTotals(auth, e.id)} isAdmin={isAdmin} items={opts.items} warehouses={opts.warehouses} />;
+      })() : null}
       {can(auth, 'events.manage') ? <EventActions id={e.id} status={e.status} editable={isEditable(e.status)} /> : null}
     </>
   );

@@ -31,7 +31,10 @@ export const VISIBLE = (eventCol: string, userParam: string) => `(
   EXISTS (SELECT 1 FROM event_assignments a WHERE a.event_id = ${eventCol} AND a.user_id = ${userParam} AND a.removed_at IS NULL)
   OR EXISTS (SELECT 1 FROM event_lines vl JOIN event_line_sources vs ON vs.event_line_id = vl.id
               JOIN warehouse_assignments wa ON wa.warehouse_id = vs.warehouse_id AND wa.user_id = ${userParam} AND wa.unassigned_at IS NULL
-             WHERE vl.event_id = ${eventCol}))`;
+             WHERE vl.event_id = ${eventCol})
+  OR EXISTS (SELECT 1 FROM dispatch_rounds vr JOIN checklist_steps vst ON vst.round_id = vr.id
+              JOIN warehouse_assignments wa2 ON wa2.warehouse_id = vst.warehouse_id AND wa2.user_id = ${userParam} AND wa2.unassigned_at IS NULL
+             WHERE vr.event_id = ${eventCol}))`;
 
 /** Managers see only their events (005 FR-010); Admins see all. */
 export async function requireEventAccess(auth: Authenticated, eventId: string): Promise<void> {

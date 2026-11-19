@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import { ApiClientError, eventListSchema, eventSchema, todaySchema, type TodayView, formatDateTimeIST, formatPlainDate, formatQuantity, t, type EventDetail, type EventRow, type MessageKey } from '@artoholic/shared';
+import { ApiClientError, eventListSchema, eventSchema, roundsSchema, todaySchema, type Rounds, type TodayView, formatDateTimeIST, formatPlainDate, formatQuantity, t, type EventDetail, type EventRow, type MessageKey } from '@artoholic/shared';
 import { useAuth } from '../auth/AuthContext';
 import { Button, Field, Message, ui } from './ui';
 
@@ -57,12 +57,16 @@ export function EventListScreen({ onOpen, onToday }: { onOpen: (id: string) => v
 }
 
 /** Read-only event on the phone; planning happens on the web (005 FR-013). */
-export function EventScreen({ id }: { id: string }) {
+export function EventScreen({ id, onOpenStep }: { id: string; onOpenStep?: (stepId: string) => void }) {
   const { api } = useAuth();
   const [e, setE] = useState<EventDetail | null>(null);
+  const [rounds, setRounds] = useState<Rounds | null>(null);
   const [err, setErr] = useState<string | null>(null);
   useEffect(() => {
-    void api.get(`/api/v1/events/${id}`, eventSchema).then(setE).catch((x) => setErr(errText(x)));
+    void api.get(`/api/v1/events/${id}`, eventSchema).then((ev) => {
+      setE(ev);
+      if (ev.status !== 'draft' && ev.status !== 'cancelled') void api.get(`/api/v1/events/${id}/rounds`, roundsSchema).then(setRounds).catch(() => undefined);
+    }).catch((x) => setErr(errText(x)));
   }, [api, id]);
   if (err) return <Message error>{err}</Message>;
   if (!e) return null;
@@ -84,6 +88,17 @@ export function EventScreen({ id }: { id: string }) {
       <Text>{`${t('ev.eventManagers')}: ${e.eventManagers.map((m) => m.fullName).join(', ')}`}</Text>
       <Text>{`${t('ev.storeManagers')}: ${e.storeManagers.map((m) => m.fullName).join(', ')}`}</Text>
       {e.siteContactName ? <Text>{`${t('ev.siteContact')}: ${e.siteContactName} ${e.siteContactPhone ?? ''}`}</Text> : null}
+      {rounds?.rounds.map((r) => (
+        <View key={r.id}>
+          <Text style={{ fontWeight: '600', marginTop: 12 }}>{rounds.rounds.length > 1 ? `${t('ck.checklists')} · ${t('ck.round', { n: r.round })}` : t('ck.checklists')}</Text>
+          {r.steps.map((s) => (
+            <Pressable key={s.id} accessibilityRole="button" style={ui.row} onPress={() => onOpenStep?.(s.id)}>
+              <Text style={{ fontWeight: '600' }}>{[t(`ck.step.${s.step}` as MessageKey), s.warehouseCode].filter(Boolean).join(' · ')}</Text>
+              <Text style={ui.muted}>{s.ready || s.status === 'submitted' ? t(`ck.stepStatus.${s.status}` as MessageKey) : t('ck.notReady')}</Text>
+            </Pressable>
+          ))}
+        </View>
+      ))}
       <Text style={{ fontWeight: '600', marginTop: 12 }}>{t('ev.items')}</Text>
       {e.lines.map((l) => (
         <View key={l.id} style={ui.row}>
