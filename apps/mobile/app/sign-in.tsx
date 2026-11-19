@@ -11,5 +11,5 @@ export default function SignInRoute() {
       auth.takeReturnPath().then((p) => router.replace(p as never));
     }
   }, [auth.status]); // eslint-disable-line react-hooks/exhaustive-deps
-  return <SignInScreen />;
+  return <SignInScreen onForgot={() => router.push('/forgot')} />;
 }

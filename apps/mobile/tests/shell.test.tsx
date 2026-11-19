@@ -21,7 +21,7 @@ describe('mobile sign-in (US1)', () => {
   it('signs in, stores the token in secure storage and sends platform headers', async () => {
     onRequest('/api/v1/auth/sign-in', { status: 200, body: { user: ME, token: 'tok-123', expiresAt: ME.session.expiresAt } });
     renderWithAuth(<SignInScreen />);
-    fireEvent.changeText(screen.getByLabelText('Username'), 'owner');
+    fireEvent.changeText(screen.getByLabelText('Username, email or phone'), 'owner');
     fireEvent.changeText(screen.getByLabelText('Password'), 'secret-pass-1');
     fireEvent.press(screen.getByRole('button', { name: 'Sign in' }));
     await waitFor(() => expect(SecureStore.setItemAsync).toHaveBeenCalledWith('artoholic.session', 'tok-123'));
@@ -36,7 +36,7 @@ describe('mobile sign-in (US1)', () => {
       body: { error: { code: 'INVALID_CREDENTIALS', message: 'Username or password is incorrect' } }
     });
     renderWithAuth(<SignInScreen />);
-    fireEvent.changeText(screen.getByLabelText('Username'), 'owner');
+    fireEvent.changeText(screen.getByLabelText('Username, email or phone'), 'owner');
     fireEvent.changeText(screen.getByLabelText('Password'), 'wrong-pass-1');
     fireEvent.press(screen.getByRole('button', { name: 'Sign in' }));
     expect(await screen.findByText('Username or password is incorrect')).toBeTruthy();

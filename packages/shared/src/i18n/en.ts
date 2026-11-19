@@ -63,6 +63,7 @@ export const en = {
   'users.title': 'Users',
   'users.new': 'New user',
   'users.search': 'Search name, username, phone or email',
+  'users.searchButton': 'Search',
   'users.fullName': 'Full name',
   'users.phone': 'Phone number',
   'users.email': 'Email (optional)',

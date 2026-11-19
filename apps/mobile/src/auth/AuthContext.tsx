@@ -12,6 +12,8 @@ interface AuthValue {
   api: ApiClient;
   signIn(username: string, password: string): Promise<void>;
   signOut(): Promise<void>;
+  /** Forgets the session on this device only (biometric fallback). */
+  forgetLocally(): Promise<void>;
   refresh(): Promise<void>;
   /** Screens report where the user is, so a session expiry can bring them back there. */
   markLocation(path: string): void;
@@ -79,6 +81,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } catch {
         // signing out locally is enough if the server is unreachable
       }
+      await tokenStore.clear();
+      setMe(null);
+      setStatus('signedOut');
+    },
+    async forgetLocally() {
       await tokenStore.clear();
       setMe(null);
       setStatus('signedOut');
