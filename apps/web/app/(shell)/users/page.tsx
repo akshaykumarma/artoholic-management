@@ -3,6 +3,7 @@ import { formatPhone, ROLES, t, type Role } from '@artoholic/shared';
 import { requirePageAuth, can } from '@/lib/server-auth';
 import Forbidden from '@/components/Forbidden';
 import { listUsers } from '@/server/users/service';
+import UserRowActions from './UserRowActions';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,6 +13,7 @@ export default async function UsersPage({ searchParams }: { searchParams: { q?: 
   const role = ROLES.includes(searchParams.role as Role) ? (searchParams.role as Role) : undefined;
   const status = searchParams.status === 'active' || searchParams.status === 'deactivated' ? searchParams.status : undefined;
   const { items } = await listUsers({ q: searchParams.q, role, status });
+  const isSuperAdmin = auth.user.roles.includes('super_admin');
   return (
     <section className="card">
       <h2>{t('users.title')}</h2>
@@ -41,7 +43,7 @@ export default async function UsersPage({ searchParams }: { searchParams: { q?: 
       {items.length === 0 ? <p>{t('users.empty')}</p> : (
         <table>
           <thead>
-            <tr><th>{t('users.fullName')}</th><th>{t('signIn.username')}</th><th>{t('users.phone')}</th><th>{t('users.roles')}</th><th>{t('users.status')}</th></tr>
+            <tr><th>{t('users.fullName')}</th><th>{t('signIn.username')}</th><th>{t('users.phone')}</th><th>{t('users.roles')}</th><th>{t('users.status')}</th><th>{t('users.actions')}</th></tr>
           </thead>
           <tbody>
             {items.map((u) => (
@@ -50,7 +52,8 @@ export default async function UsersPage({ searchParams }: { searchParams: { q?: 
                 <td>{u.username}</td>
                 <td>{u.phone ? formatPhone(u.phone) : '—'}</td>
                 <td>{u.roles.map((r) => t(`role.${r}`)).join(', ')}</td>
-                <td>{t(`users.status.${u.status}`)}</td>
+                <td><span className={`pill ${u.status === 'active' ? 'st-closed' : 'st-cancelled'}`}>{t(`users.status.${u.status}`)}</span>{u.id === auth.user.id ? <span className="muted">{` · ${t('users.you')}`}</span> : null}</td>
+                <td><UserRowActions user={u} isSuperAdmin={isSuperAdmin} isSelf={u.id === auth.user.id} /></td>
               </tr>
             ))}
           </tbody>
