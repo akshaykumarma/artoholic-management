@@ -1,7 +1,10 @@
 {
   "name": "artoholic-management",
   "private": true,
-  "workspaces": ["packages/*", "apps/*"],
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
     "dev:web": "npm run dev -w @artoholic/web",
     "dev:mobile": "npm run start -w @artoholic/mobile",
@@ -10,7 +13,8 @@
     "test": "npm run test --workspaces --if-present",
     "test:e2e": "npm run test:e2e -w @artoholic/web",
     "db:migrate": "npm run db:migrate -w @artoholic/web",
-    "seed:super-admin": "npm run seed:super-admin -w @artoholic/web"
+    "seed:super-admin": "npm run seed:super-admin -w @artoholic/web",
+    "seed:demo": "npm run seed:demo -w @artoholic/web"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.12.2",
