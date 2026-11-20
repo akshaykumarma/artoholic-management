@@ -19,7 +19,7 @@ damage approval and scheduled reports. One API serves a web app, an Android app 
 
 ## Run it locally
 
-Prerequisites: Node.js 20+, npm 10, Docker (or a local PostgreSQL 15+).
+Prerequisites: Node.js 20+, npm 10, Docker Desktop (for PostgreSQL, MinIO and Mailpit).
 
 ```bash
 npm install
@@ -29,8 +29,10 @@ npm install
 cp .env.example .env
 ```
 
+In `.env`, set `DEV_TOOLS=true` so you can read password-reset codes at `/dev/outbox` while testing.
+
 ```bash
-docker compose up -d db minio minio-init
+docker compose up -d db minio minio-init mailpit
 ```
 
 ```bash
@@ -42,15 +44,22 @@ SUPER_ADMIN_USERNAME=owner SUPER_ADMIN_PASSWORD='choose-a-strong-one' SUPER_ADMI
 ```
 
 ```bash
+npm run seed:demo
+```
+
+```bash
 npm run dev:web
 ```
+
+Open http://localhost:3000. The demo seed creates `asha` (Admin), `meera` (Event Manager) and `ravi` (Store Manager)
+with password `artoholic-demo-2026`, two warehouses, stock and a scheduled event. What to try: [`docs/TESTING.md`](docs/TESTING.md).
+
+Phones: set `EXPO_PUBLIC_API_URL` in `.env` to your computer's LAN address (for example `http://192.168.1.20:3000`),
+then run the line below and scan the QR code with Expo Go:
 
 ```bash
 npm run dev:mobile
 ```
-
-The web app runs on http://localhost:3000. For the mobile app, set `EXPO_PUBLIC_API_URL` in
-`.env` to an address your phone can reach (for example your computer's LAN IP).
 
 ## Checks
 

@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "db:migrate": "tsx db/migrate.ts",
-    "seed:super-admin": "tsx scripts/seed-super-admin.ts"
+    "seed:super-admin": "tsx scripts/seed-super-admin.ts",
+    "seed:demo": "tsx scripts/seed-demo.ts"
   },
   "dependencies": {
     "@artoholic/shared": "*",
