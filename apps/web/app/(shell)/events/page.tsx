@@ -3,6 +3,7 @@ import { EVENT_STATUSES, formatDateTimeIST, t, type MessageKey } from '@artoholi
 import { requirePageAuth, can } from '@/lib/server-auth';
 import Forbidden from '@/components/Forbidden';
 import { listEvents, listEventTypes } from '@/server/events/views';
+import StatusPill from '@/components/StatusPill';
 
 export const dynamic = 'force-dynamic';
 
@@ -67,7 +68,7 @@ export default async function EventsPage({ searchParams }: { searchParams: SP })
               <td><Link href={`/events/${e.id}`}>{e.name || e.number}</Link></td>
               <td>{e.startsAt ? formatDateTimeIST(e.startsAt) : ''}</td>
               <td>{e.venueName}</td>
-              <td>{t(`ev.status.${e.status}` as MessageKey)}{e.overbooked ? <strong className="error">{` · ${t('ev.overbooked')}`}</strong> : null}</td>
+              <td><StatusPill status={e.status} />{e.overbooked ? <strong className="error">{` · ${t('ev.overbooked')}`}</strong> : null}</td>
             </tr>
           ))}
         </tbody>

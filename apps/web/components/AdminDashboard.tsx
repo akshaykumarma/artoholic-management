@@ -1,8 +1,9 @@
 'use client';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { formatMoney, formatPlainDate, t, type Dashboard, type MessageKey } from '@artoholic/shared';
+import { formatMoney, formatPlainDate, t, type Dashboard } from '@artoholic/shared';
 import { api } from '@/lib/api';
+import StatusPill from './StatusPill';
 
 /** Admin home figures, refreshed every 60 s; each links to the list behind it (009 US3). */
 export default function AdminDashboard({ initial }: { initial: Dashboard }) {
@@ -12,9 +13,9 @@ export default function AdminDashboard({ initial }: { initial: Dashboard }) {
     return () => clearInterval(h);
   }, []);
   const tile = (label: string, value: string | number, href: string) => (
-    <Link href={href} className="card" style={{ display: 'block', padding: 12, minWidth: 160, textDecoration: 'none' }}>
-      <div className="muted">{label}</div>
-      <div style={{ fontSize: 24, fontWeight: 700 }} data-testid={`dash-${label}`}>{value}</div>
+    <Link href={href} className="stat">
+      <div className="stat-label">{label}</div>
+      <div className="stat-value" data-testid={`dash-${label}`}>{value}</div>
     </Link>
   );
   const p = d.pendingApprovals;
@@ -23,7 +24,7 @@ export default function AdminDashboard({ initial }: { initial: Dashboard }) {
       <h3>{t('dash.title')}</h3>
       <p><Link href="/reports/R6">{t('dash.today', { d: d.today.dispatches, r: d.today.returns })}</Link></p>
       <p><Link href="/reports/R6">{t('dash.week', { d: d.week.dispatches, r: d.week.returns })}</Link></p>
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+      <div className="stats">
         {tile(t('dash.damage'), p.damage, '/approvals')}
         {tile(t('dash.variances'), p.variances, '/counts')}
         {tile(t('dash.writeOffs'), p.writeOffs, '/inventory/approvals')}
@@ -34,7 +35,7 @@ export default function AdminDashboard({ initial }: { initial: Dashboard }) {
         {tile(t('dash.overbooked'), d.overbookedCount, '/events?overbooked=true')}
       </div>
       <h4>{t('dash.events')}</h4>
-      <p>{Object.entries(d.eventsByStatus).map(([s, n]) => `${t(`ev.status.${s}` as MessageKey)} ${n}`).join(' · ')}</p>
+      <p className="pills">{Object.entries(d.eventsByStatus).map(([s, n]) => <span key={s}><StatusPill status={s} /> {n}</span>)}</p>
       {d.nextCounts.length ? <><h4>{t('dash.nextCounts')}</h4><ul>{d.nextCounts.map((c, i) => <li key={i}>{`${c.name} · ${formatPlainDate(c.dueDate)}`}</li>)}</ul></> : null}
     </section>
   );

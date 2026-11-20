@@ -13,5 +13,5 @@ export default function UnreadBadge({ initial }: { initial: number }) {
     return () => { clearInterval(h); window.removeEventListener('focus', tick); };
   }, []);
   if (!n) return null;
-  return <span className="badge" role="status" aria-label={t('ntf.unread', { n })} style={{ marginLeft: 6, background: '#EBAB3F', color: '#4A5055', borderRadius: 10, padding: '0 8px', fontSize: 12, fontWeight: 700 }}>{n}</span>;
+  return <span className="badge count" role="status" aria-label={t('ntf.unread', { n })}>{n}</span>;
 }
