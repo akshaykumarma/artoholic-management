@@ -21,6 +21,7 @@ jest.mock('expo-image-manipulator', () => ({
 }));
 jest.mock('expo-image-picker', () => ({
   requestCameraPermissionsAsync: jest.fn(async () => ({ granted: true })),
+  getCameraPermissionsAsync: jest.fn(async () => ({ granted: true, status: 'granted', canAskAgain: true })),
   launchCameraAsync: jest.fn(async () => ({ canceled: false, assets: [{ uri: 'file://photo.jpg', width: 4000, height: 3000 }] })),
   launchImageLibraryAsync: jest.fn(async () => ({ canceled: false, assets: [{ uri: 'file://photo.jpg', width: 4000, height: 3000 }] }))
 }));

@@ -2,7 +2,17 @@
   "cli": { "version": ">= 12.0.0", "appVersionSource": "remote" },
   "build": {
     "development": { "developmentClient": true, "distribution": "internal" },
-    "preview": { "distribution": "internal", "env": { "EXPO_PUBLIC_API_URL": "https://staging.example.invalid" } }
+    "preview": { "distribution": "internal", "autoIncrement": true, "env": { "EXPO_PUBLIC_API_URL": "https://staging.example.invalid" } },
+    "production": {
+      "autoIncrement": true,
+      "android": { "buildType": "app-bundle" },
+      "env": { "EXPO_PUBLIC_API_URL": "https://ops.artoholic.example.invalid" }
+    }
   },
-  "submit": {}
+  "submit": {
+    "production": {
+      "android": { "track": "internal", "releaseStatus": "draft" },
+      "ios": {}
+    }
+  }
 }

@@ -1,3 +1,4 @@
+import { getPool } from '../../db/client';
 import { describe, it, expect } from 'vitest';
 import { POST as signIn } from '../../app/api/v1/auth/sign-in/route';
 import { GET as me } from '../../app/api/v1/me/route';
@@ -7,6 +8,7 @@ import { createUser } from '../helpers';
 import { makeReq, setCookies } from '../request';
 
 async function raiseAndroidMinimum(min: string) {
+  await getPool().query("INSERT INTO app_releases (platform, version, build_number, store_status) VALUES ('android', $1, 99, 'live') ON CONFLICT DO NOTHING", [min]);
   const u = await createUser({ roles: ['super_admin'] });
   const cookies = setCookies(await signIn(makeReq('POST', '/api/v1/auth/sign-in', { body: { username: u.username, password: u.password } })));
   const res = await putVersions(

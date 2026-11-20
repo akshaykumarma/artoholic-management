@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 const PAGES: Array<[string, MessageKey, 'all' | 'super']> = [
   ['/admin/audit', 'adm.audit', 'all'], ['/admin/imports', 'adm.imports', 'all'], ['/admin/activity', 'adm.activity', 'super'],
   ['/admin/profile', 'adm.profile', 'super'], ['/admin/lists', 'adm.lists', 'super'], ['/admin/integrations', 'adm.integrations', 'super'],
-  ['/admin/messages', 'adm.messages', 'super'], ['/admin/backups', 'adm.backups', 'super'], ['/admin/retention', 'adm.retention', 'super'], ['/admin/status', 'adm.status', 'super']
+  ['/admin/messages', 'adm.messages', 'super'], ['/admin/backups', 'adm.backups', 'super'], ['/admin/retention', 'adm.retention', 'super'], ['/admin/releases', 'rel.title', 'super'], ['/admin/deletion-requests', 'del.title', 'all'], ['/admin/status', 'adm.status', 'super']
 ];
 
 export default async function ConsolePage() {

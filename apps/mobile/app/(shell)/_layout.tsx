@@ -55,6 +55,7 @@ export default function ShellLayout() {
         <Stack.Screen name="reports/index" options={{ title: t('rpt.title') }} />
         <Stack.Screen name="reports/[reportId]" options={{ title: t('rpt.title') }} />
         <Stack.Screen name="settings/notifications" options={{ title: t('ntf.settings') }} />
+        <Stack.Screen name="settings/delete-account" options={{ title: t('del.request') }} />
         <Stack.Screen name="counts/[sessionId]" options={{ title: t('cnt.sheet') }} />
       </Stack>
     </BiometricGate>

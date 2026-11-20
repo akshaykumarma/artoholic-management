@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
 import { ApiClientError, cutResultSchema, formatQuantity, hasPermission, itemListSchema, itemViewSchema, t, type ItemView } from '@artoholic/shared';
 import { useAuth } from '../auth/AuthContext';
+import { pickPhoto } from '../permissions';
 import { uploadItemPhoto } from '../photos/upload';
 import { Button, Field, Message, ui } from './ui';
 
@@ -64,9 +64,7 @@ export function ItemViewScreen({ id }: { id: string }) {
   }
 
   async function addPhoto() {
-    const perm = await ImagePicker.requestCameraPermissionsAsync();
-    const shot = perm.granted ? await ImagePicker.launchCameraAsync({ quality: 1 }) : await ImagePicker.launchImageLibraryAsync({ quality: 1 });
-    const asset = !shot.canceled ? shot.assets[0] : undefined;
+    const asset = await pickPhoto();
     if (asset) await run(async () => (await uploadItemPhoto(api, id, asset), t('versions.saved')));
   }
 
