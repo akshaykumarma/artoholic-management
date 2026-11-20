@@ -1,7 +1,8 @@
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
-import type { ApiClient } from '@artoholic/shared';
+import { t, type ApiClient } from '@artoholic/shared';
+import { explain } from '../permissions';
 
 /**
  * Asks for permission and registers this device's Expo push token for the signed-in session
@@ -14,7 +15,10 @@ export async function registerForPush(api: ApiClient): Promise<string | null> {
     await Notifications.setNotificationChannelAsync('default', { name: 'Artoholic', importance: Notifications.AndroidImportance.HIGH });
   }
   let { status } = await Notifications.getPermissionsAsync();
-  if (status !== 'granted') status = (await Notifications.requestPermissionsAsync()).status;
+  if (status === 'undetermined') {
+    await explain(t('perm.notifications'));
+    status = (await Notifications.requestPermissionsAsync()).status;
+  }
   if (status !== 'granted') return null;
   const { data: token } = await Notifications.getExpoPushTokenAsync({ projectId });
   await api.post('/api/v1/me/push-registrations', { expoToken: token });

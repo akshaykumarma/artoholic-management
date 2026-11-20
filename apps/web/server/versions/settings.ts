@@ -1,3 +1,5 @@
+import { assertVersionLive } from '../releases';
+import { compareVersions } from '@artoholic/shared';
 import type { PoolClient } from 'pg';
 import type { MobilePlatform, MobileVersionSetting, MobileVersionUpdate } from '@artoholic/shared';
 import { getPool, withTransaction } from '../../db/client';
@@ -34,6 +36,8 @@ export async function updateVersionSettings(
 ): Promise<MobileVersionSetting> {
   const saved = await withTransaction(async (tx) => {
     const before = (await load(tx)).get(platform);
+    // Raising the minimum is only allowed to a version that is already live in that store (011 FR-004).
+    if (before && compareVersions(input.minimumVersion, before.minimumVersion) > 0) await assertVersionLive(tx, platform, input.minimumVersion);
     await tx.query(
       `UPDATE mobile_version_settings SET minimum_version = $2, recommended_version = $3, store_url = $4, updated_at = now(), updated_by = $5
        WHERE platform = $1`,

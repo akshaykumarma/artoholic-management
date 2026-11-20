@@ -31,6 +31,7 @@ describe('PUT /api/v1/admin/mobile-versions/{platform}', () => {
 
   it('Super Admin saves settings and an audit entry with before/after', async () => {
     const cookies = await superAdminCookies();
+    await getPool().query("INSERT INTO app_releases (platform, version, build_number, store_status) VALUES ('android', '1.2.0', 12, 'live')");
     const res = await putVersions(makeReq('PUT', '/api/v1/admin/mobile-versions/android', { cookies, csrf: cookies.csrf, body }), { params: { platform: 'android' } });
     expect(res.status).toBe(200);
     expect(mobileVersionSettingSchema.parse(await res.json())).toMatchObject(body);

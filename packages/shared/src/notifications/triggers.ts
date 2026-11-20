@@ -52,6 +52,7 @@ export const TRIGGERS: Record<string, TriggerDef> = {
   'report.recipient_removed': { group: 'reports', channels: [], recipients: 'payload', path: () => '/reports/schedules' },
   'backup.failed': { group: 'account', channels: ['email'], recipients: 'payload', bypassQuietHours: true, path: () => '/admin/backups' },
   'backup.restore_test_due': { group: 'account', channels: ['email'], recipients: 'payload', path: () => '/admin/backups' },
+  'account.deletion_requested': { group: 'account', channels: ['push', 'email'], recipients: 'admins', path: () => '/admin/deletion-requests' },
   'message.failed': { group: 'account', channels: [], recipients: 'payload', path: () => '/admin/messages' },
   'auth.password_reset': { group: 'account', channels: ['whatsapp', 'email'], recipients: 'payload', path: () => '/sign-in' }
 };

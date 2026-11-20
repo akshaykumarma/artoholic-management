@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
 import { ApiClientError, draftKey, formatQuantity, SHORT_REASONS, stepSchema, t, type EntryInput, type MessageKey, type Step, type StepRow } from '@artoholic/shared';
 import { useAuth } from '../auth/AuthContext';
+import { pickPhoto } from '../permissions';
 import { mobileDraftStore } from '../drafts';
 import { enqueuePhoto, forgetStep, processQueue, readQueue } from '../photos/queue';
 import { Button, Field, Message, ui } from '../screens/ui';
@@ -84,9 +84,7 @@ export function ChecklistScreen({ eventId, stepId }: { eventId: string; stepId: 
   const missingLines = step.rows.filter((r) => missingOf(r, entries[r.entryId]) > 0);
 
   async function addPhoto(r: StepRow) {
-    const perm = await ImagePicker.requestCameraPermissionsAsync();
-    const shot = perm.granted ? await ImagePicker.launchCameraAsync({ quality: 1 }) : await ImagePicker.launchImageLibraryAsync({ quality: 1 });
-    const asset = !shot.canceled ? shot.assets[0] : undefined;
+    const asset = await pickPhoto();
     if (!asset || !step) return;
     await enqueuePhoto(mobileDraftStore, asset, { stepId, entryId: r.entryId, eventNumber: step.eventNumber });
     await syncPhotos();

@@ -29,3 +29,4 @@ export * from './contracts/notifications';
 export * from './notifications/deeplinks';
 export * from './reports/registry';
 export * from './contracts/reports';
+export * from './contracts/releases';

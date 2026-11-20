@@ -24,6 +24,9 @@ export default function HomeScreen({ onOpen }: { onOpen?: (path: string) => void
       <Pressable accessibilityRole="button" style={styles.item} onPress={() => onOpen?.('/settings/security')}>
         <Text style={styles.itemText}>{t('security.title')}</Text>
       </Pressable>
+      <Pressable accessibilityRole="button" style={styles.item} onPress={() => onOpen?.('/settings/delete-account')}>
+        <Text style={styles.itemText}>{t('del.request')}</Text>
+      </Pressable>
       <Pressable accessibilityRole="button" style={styles.signOut} onPress={signOut}>
         <Text>{t('signOut')}</Text>
       </Pressable>

@@ -24,3 +24,11 @@
   text stays in each event's Activity and in Super Admin → Login & activity. OTP codes
   are always shown redacted there.
 - Owner decisions Q1–Q14 (PRD §13) are settled; don't reopen them without the owner.
+- **Checklists are one entry per step for the whole event** (owner, 2026-11-20): one submission per
+  step (per warehouse for warehouse steps), with one set of vehicle and driver details; trucks and
+  truckloads are not tracked.
+- **Account deletion keeps the permanent records** (owner, 2026-11-20): pseudonymisation replaces a
+  person's name, phone, email and username everywhere they are shown, but the WhatsApp/email message
+  log (recipient address and text) and past audit before/after values are left unchanged.
+- **App identity** (owner, 2026-11-20): store name "Artoholic", Android package and iOS bundle id
+  `in.artoholic.ops`.
