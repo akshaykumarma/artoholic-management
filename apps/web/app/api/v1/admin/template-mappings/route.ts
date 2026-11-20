@@ -2,10 +2,10 @@ import { z } from 'zod';
 import { templateMappingSchema } from '@artoholic/shared';
 import { api, parseBody } from '@/server/http/handler';
 import { requireSession } from '@/server/auth/guards';
+import { listTemplates, requireSuperAdmin, setTemplates } from '@/server/notifications/admin';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-import { listTemplates, requireSuperAdmin, setTemplates } from '@/server/notifications/admin';
 
 export const GET = api(async (_req, ctx) => {
   const auth = await requireSession(ctx);

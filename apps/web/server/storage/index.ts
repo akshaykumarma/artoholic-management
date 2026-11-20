@@ -1,4 +1,4 @@
-import { HeadObjectCommand, PutObjectCommand, GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, HeadObjectCommand, PutObjectCommand, GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 /** Object storage for photos and files. Tests use the in-memory implementation. */
@@ -9,6 +9,7 @@ export interface Storage {
   /** Server-side upload and download (report files, 009). */
   putObject(key: string, body: Buffer, contentType: string): Promise<void>;
   getObject(key: string): Promise<Buffer | null>;
+  deleteObject(key: string): Promise<void>;
 }
 
 function s3(): S3Client {
@@ -42,6 +43,9 @@ const s3Storage: Storage = {
     } catch {
       return null;
     }
+  },
+  async deleteObject(key) {
+    await s3().send(new DeleteObjectCommand({ Bucket: bucket(), Key: key }));
   }
 };
 
@@ -56,6 +60,7 @@ export const memoryStorage: Storage & { put(key: string, bytes: number, contentT
   },
   putObject: async (key, body, contentType) => void objects.set(key, { bytes: body.length, contentType, body }),
   getObject: async (key) => objects.get(key)?.body ?? null,
+  deleteObject: async (key) => void objects.delete(key),
   put: (key, bytes, contentType) => void objects.set(key, { bytes, contentType }),
   clear: () => objects.clear()
 };

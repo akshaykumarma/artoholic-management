@@ -1,10 +1,10 @@
 import { z } from 'zod';
 import { api, parseBody } from '@/server/http/handler';
 import { requireSession } from '@/server/auth/guards';
+import { requireSuperAdmin, sendTest } from '@/server/notifications/admin';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-import { requireSuperAdmin, sendTest } from '@/server/notifications/admin';
 
 const body = z.object({ to: z.string().min(3).max(200) });
 

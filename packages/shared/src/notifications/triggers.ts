@@ -50,6 +50,8 @@ export const TRIGGERS: Record<string, TriggerDef> = {
   'transfer.shortfall': { group: 'stock', channels: ['push'], recipients: 'admins', path: (p) => `/warehouses/transfers/${s(p.transferId)}` },
   'report.ready': { group: 'reports', channels: ['whatsapp', 'email'], recipients: 'payload', path: (p) => s(p.link) || '/reports' },
   'report.recipient_removed': { group: 'reports', channels: [], recipients: 'payload', path: () => '/reports/schedules' },
+  'backup.failed': { group: 'account', channels: ['email'], recipients: 'payload', bypassQuietHours: true, path: () => '/admin/backups' },
+  'backup.restore_test_due': { group: 'account', channels: ['email'], recipients: 'payload', path: () => '/admin/backups' },
   'message.failed': { group: 'account', channels: [], recipients: 'payload', path: () => '/admin/messages' },
   'auth.password_reset': { group: 'account', channels: ['whatsapp', 'email'], recipients: 'payload', path: () => '/sign-in' }
 };
