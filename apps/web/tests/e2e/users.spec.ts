@@ -69,3 +69,52 @@ test('create user → forced change → reset by code → deactivate (002 quicks
   await signIn(meena, '+919123456789', 'jasmine-hall-31');
   await expect(meena.locator('p.error[role=alert]')).toHaveText('Username or password is incorrect');
 });
+
+test('users list row actions: edit, reset password, deactivate, reactivate', async ({ page, browser }) => {
+  await signIn(page, 'owner', 'e2e-password-123');
+  await expect(page).not.toHaveURL(/\/sign-in/);
+  await page.goto('/users/new', { waitUntil: 'networkidle' });
+  await page.getByLabel('Full name').fill('Kiran');
+  await page.getByLabel('Phone number').fill('98765 01234');
+  await page.getByLabel('Temporary password').fill('lotus-stage-55');
+  await page.getByLabel('Store Manager').check();
+  await page.getByRole('button', { name: 'Create user' }).click();
+  await expect(page.getByRole('heading', { name: 'Kiran' })).toBeVisible();
+
+  await page.goto('/users?q=Kiran', { waitUntil: 'networkidle' });
+  const row = page.getByRole('row', { name: /Kiran/ });
+
+  // Edit in a dialog.
+  await row.getByRole('button', { name: 'Edit' }).click();
+  const edit = page.getByRole('dialog', { name: 'Edit Kiran' });
+  await edit.getByLabel('Full name').fill('Kiran Rao');
+  await edit.getByRole('button', { name: 'Save changes' }).click();
+  await expect(edit).toBeHidden();
+  await expect(page.getByRole('link', { name: 'Kiran Rao' })).toBeVisible();
+
+  // Reset password; the new temporary password works and forces a change.
+  await page.getByRole('row', { name: /Kiran Rao/ }).getByRole('button', { name: 'Reset password' }).click();
+  const reset = page.getByRole('dialog', { name: 'Reset password for Kiran Rao' });
+  await reset.getByLabel('Temporary password', { exact: true }).fill('canopy-8080-lamp');
+  await reset.getByRole('button', { name: 'Reset password' }).click();
+  await expect(reset.getByRole('status')).toHaveText('Password reset. Share the temporary password with Kiran Rao.');
+  await reset.getByRole('button', { name: 'Close' }).first().click();
+  const kiran = await browser.newPage();
+  await signIn(kiran, '9876501234', 'canopy-8080-lamp');
+  await expect(kiran).toHaveURL(/\/change-password/);
+
+  // Deactivate with a reason, then reactivate with a new temporary password.
+  await page.getByRole('row', { name: /Kiran Rao/ }).getByRole('button', { name: 'Deactivate' }).click();
+  const deact = page.getByRole('dialog', { name: 'Deactivate Kiran Rao?' });
+  await deact.getByLabel('Reason').fill('Seasonal staff');
+  await deact.getByRole('button', { name: 'Deactivate' }).click();
+  await expect(deact).toBeHidden();
+  const kiranRow = page.getByRole('row', { name: /Kiran Rao/ });
+  await expect(kiranRow.getByText('Deactivated')).toBeVisible();
+  await kiranRow.getByRole('button', { name: 'Reactivate' }).click();
+  const react = page.getByRole('dialog', { name: 'Reactivate Kiran Rao' });
+  await react.getByRole('button', { name: 'Reactivate' }).click();
+  await expect(react.getByRole('status')).toBeVisible();
+  await react.getByRole('button', { name: 'Close' }).first().click();
+  await expect(page.getByRole('row', { name: /Kiran Rao/ }).getByText('Active')).toBeVisible();
+});
