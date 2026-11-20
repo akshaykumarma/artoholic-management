@@ -49,6 +49,7 @@ export const TRIGGERS: Record<string, TriggerDef> = {
   'stock.request_pending': { group: 'stock', channels: ['push'], recipients: 'admins', path: () => '/inventory/approvals' },
   'transfer.shortfall': { group: 'stock', channels: ['push'], recipients: 'admins', path: (p) => `/warehouses/transfers/${s(p.transferId)}` },
   'report.ready': { group: 'reports', channels: ['whatsapp', 'email'], recipients: 'payload', path: (p) => s(p.link) || '/reports' },
+  'report.recipient_removed': { group: 'reports', channels: [], recipients: 'payload', path: () => '/reports/schedules' },
   'message.failed': { group: 'account', channels: [], recipients: 'payload', path: () => '/admin/messages' },
   'auth.password_reset': { group: 'account', channels: ['whatsapp', 'email'], recipients: 'payload', path: () => '/sign-in' }
 };

@@ -1,8 +1,9 @@
 import React from 'react';
 import { Pressable, ScrollView, StyleSheet, Text } from 'react-native';
-import { t } from '@artoholic/shared';
+import { hasPermission, t } from '@artoholic/shared';
 import { useAuth } from '../auth/AuthContext';
 import { colors } from '../theme';
+import { DashboardCard } from './ReportScreens';
 
 export default function HomeScreen({ onOpen }: { onOpen?: (path: string) => void }) {
   const { me, signOut } = useAuth();
@@ -13,6 +14,7 @@ export default function HomeScreen({ onOpen }: { onOpen?: (path: string) => void
     <ScrollView contentContainerStyle={styles.wrap}>
       <Text style={styles.title}>{t('home.welcome', { name: me.fullName })}</Text>
       <Text style={styles.muted}>{t('home.roles', { roles: roles || '—' })}</Text>
+      {hasPermission(me.roles, 'stock.approve') ? <DashboardCard onOpen={(p) => onOpen?.(p)} /> : null}
       {items.length === 0 ? <Text style={styles.empty}>{t('home.noModules')}</Text> : null}
       {items.map((m) => (
         <Pressable key={m.moduleId} accessibilityRole="button" style={styles.item} onPress={() => onOpen?.(m.path)}>

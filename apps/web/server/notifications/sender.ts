@@ -2,7 +2,13 @@ import type { PoolClient } from 'pg';
 import { getPool, withTransaction } from '../../db/client';
 import { logger } from '../http/logger';
 import { now } from '../auth/clock';
+import { getStorage } from '../storage';
 import { emailProvider, pushProvider, whatsappProvider } from './providers';
+
+/** WhatsApp documents go up to 100 MB; email attachments up to 20 MB; bigger files go as a link (009 R4). */
+export const WHATSAPP_DOC_LIMIT = 100 * 1024 * 1024;
+export const EMAIL_ATTACHMENT_LIMIT = 20 * 1024 * 1024;
+const appUrl = (path: string) => `${process.env.APP_URL ?? 'http://localhost:3000'}${path}`;
 
 type Tx = Pick<PoolClient, 'query'>;
 /** Retries at 1, 5 and 9 minutes (≈ 15 minutes), then failed and the Super Admin is told (FR-008, R8). */
@@ -45,10 +51,18 @@ async function deliver(tx: Tx, job: Job) {
     'SELECT to_address, template_name, language, attachments FROM messages WHERE id = $1', [job.message_id]
   );
   const m = rows[0]!;
-  const p = job.payload as { subject: string; text: string; params: string[] };
-  const result = job.channel === 'whatsapp'
-    ? await (await whatsappProvider(tx)).sendTemplate({ to: m.to_address, template: m.template_name!, language: m.language ?? 'en', params: p.params ?? [], text: p.text })
-    : await (await emailProvider(tx)).send({ to: m.to_address, subject: p.subject, text: p.text });
+  const p = job.payload as { subject: string; text: string; params: string[]; file?: { name: string; size: number; key: string } | null; downloadPath?: string | null };
+  const link = p.downloadPath ? appUrl(p.downloadPath) : null;
+  let result;
+  if (job.channel === 'whatsapp') {
+    const doc = p.file && p.file.size <= WHATSAPP_DOC_LIMIT ? { url: await getStorage().presignGet(p.file.key), filename: p.file.name } : undefined;
+    const text = p.file && !doc ? `${p.text}\nThe file is too large for WhatsApp; it has been emailed${link ? ` and is at ${link}` : ''}.` : p.text;
+    result = await (await whatsappProvider(tx)).sendTemplate({ to: m.to_address, template: m.template_name!, language: m.language ?? 'en', params: p.params ?? [], text, document: doc });
+  } else {
+    const attach = p.file && p.file.size <= EMAIL_ATTACHMENT_LIMIT ? await getStorage().getObject(p.file.key) : null;
+    const text = p.file && !attach && link ? `${p.text}\nDownload: ${link}` : p.text;
+    result = await (await emailProvider(tx)).send({ to: m.to_address, subject: p.subject, text, attachments: attach ? [{ filename: p.file!.name, content: attach }] : undefined });
+  }
   await markMessage(tx, job.message_id!, 'sent', null, { providerId: result.providerMessageId, sentAt: now() });
 }
 

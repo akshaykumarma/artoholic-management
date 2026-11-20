@@ -9,7 +9,7 @@ type Db = Pick<PoolClient, 'query'>;
 export interface SendResult { providerMessageId: string | null }
 export interface WhatsAppProvider {
   name: string;
-  sendTemplate(m: { to: string; template: string; language: string; params: string[]; text: string }): Promise<SendResult>;
+  sendTemplate(m: { to: string; template: string; language: string; params: string[]; text: string; document?: { url: string; filename: string } }): Promise<SendResult>;
 }
 export interface EmailProvider {
   name: string;
@@ -42,7 +42,13 @@ function cloudWhatsApp(phoneNumberId: string, accessToken: string): WhatsAppProv
         headers: { authorization: `Bearer ${accessToken}`, 'content-type': 'application/json' },
         body: JSON.stringify({
           messaging_product: 'whatsapp', to: m.to.replace(/^\+/, ''), type: 'template',
-          template: { name: m.template, language: { code: m.language }, components: m.params.length ? [{ type: 'body', parameters: m.params.map((text) => ({ type: 'text', text })) }] : [] }
+          template: {
+            name: m.template, language: { code: m.language },
+            components: [
+              ...(m.document ? [{ type: 'header', parameters: [{ type: 'document', document: { link: m.document.url, filename: m.document.filename } }] }] : []),
+              ...(m.params.length ? [{ type: 'body', parameters: m.params.map((text) => ({ type: 'text', text })) }] : [])
+            ]
+          }
         })
       });
       const json = (await res.json().catch(() => ({}))) as { messages?: Array<{ id: string }>; error?: { message?: string } };
@@ -59,7 +65,7 @@ export async function whatsappProvider(db: Db = getPool()): Promise<WhatsAppProv
     if (s.accessToken) return cloudWhatsApp(config.phoneNumberId, s.accessToken);
   }
   const write = devOutbox(db, 'whatsapp');
-  return { name: 'mock', async sendTemplate(m) { await write(m.to, m.text); return { providerMessageId: null }; } };
+  return { name: 'mock', async sendTemplate(m) { await write(m.to, m.document ? `${m.text}\n[document: ${m.document.filename}]` : m.text); return { providerMessageId: null }; } };
 }
 
 export async function emailProvider(db: Db = getPool()): Promise<EmailProvider> {
@@ -75,7 +81,7 @@ export async function emailProvider(db: Db = getPool()): Promise<EmailProvider> 
     };
   }
   const write = devOutbox(db, 'email');
-  return { name: 'mock', async send(m) { await write(m.to, `${m.subject}\n\n${m.text}`); return { providerMessageId: null }; } };
+  return { name: 'mock', async send(m) { await write(m.to, `${m.subject}\n\n${m.text}${(m.attachments ?? []).map((a) => `\n[attachment: ${a.filename}]`).join('')}`); return { providerMessageId: null }; } };
 }
 
 /** Expo push service (research R2): one API for FCM and APNs. */

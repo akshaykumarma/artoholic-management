@@ -43,7 +43,8 @@ export const ERROR_CODES = [
   'NOT_RECONCILED',
   'ADJUSTMENT_NEGATIVE',
   'UNCOUNTED_LINES',
-  'SESSION_STATE'
+  'SESSION_STATE',
+  'RECIPIENT_NOT_ADMIN'
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 
@@ -98,5 +99,6 @@ export const ERROR_STATUS: Record<ErrorCode, number> = {
   NOT_RECONCILED: 409,
   ADJUSTMENT_NEGATIVE: 409,
   UNCOUNTED_LINES: 400,
-  SESSION_STATE: 409
+  SESSION_STATE: 409,
+  RECIPIENT_NOT_ADMIN: 400
 };
