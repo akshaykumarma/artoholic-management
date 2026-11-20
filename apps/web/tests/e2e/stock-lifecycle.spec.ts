@@ -42,7 +42,8 @@ test('event lifecycle: four checklists, then close (006 quickstart 1, 4, 6–8)'
   await expect(page.getByText('Reconciling', { exact: true })).toBeVisible();
   await expect(page.getByRole('cell', { name: 'Reconciled' })).toBeVisible();
   await page.getByRole('button', { name: 'Close event' }).click();
-  await expect(page.getByRole('status')).toHaveText('Event closed');
+  // Closing refreshes the page, which removes the close form, so check the event's status instead.
+  await expect(page.getByText('Closed', { exact: true })).toBeVisible();
   await page.goto(`/events/${ev.id}`, { waitUntil: 'networkidle' });
   await expect(page.getByText('Closed', { exact: true })).toBeVisible();
 });

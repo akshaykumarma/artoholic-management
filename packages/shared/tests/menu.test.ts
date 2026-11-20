@@ -4,7 +4,7 @@ import { buildMenu, MODULES } from '../src/modules';
 describe('buildMenu', () => {
   it('shows only shipped modules the roles allow, on the requesting app', () => {
     const web = buildMenu(['super_admin'], 'web').map((m) => m.moduleId);
-    expect(web).toEqual(['home', 'users', 'inventory', 'warehouses', 'events', 'checklists', 'counts', 'notifications', 'reports', 'admin-status', 'conventions']);
+    expect(web).toEqual(['home', 'users', 'inventory', 'warehouses', 'events', 'checklists', 'counts', 'notifications', 'reports', 'admin-console', 'admin-status', 'conventions']);
     const android = buildMenu(['super_admin'], 'android').map((m) => m.moduleId);
     expect(android).toEqual(['home', 'users', 'inventory', 'warehouses', 'events', 'checklists', 'counts', 'notifications', 'reports', 'conventions']); // status page is web-only
   });

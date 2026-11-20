@@ -11,6 +11,12 @@ import { processOutbox } from '../notifications/dispatcher';
 import { processJobs } from '../notifications/sender';
 import { purgeOldNotifications } from '../notifications/centre';
 import { runDueSchedules } from '../reports/schedules';
+import { remindRestoreTest, runBackup } from '../admin/backups';
+import { runRetention } from '../admin/retention';
+
+const BACKUP_JOB = 'backup-nightly';
+const RETENTION_JOB = 'retention-nightly';
+const RESTORE_REMINDER_JOB = 'restore-test-reminder';
 
 const REPORTS_JOB = 'reports-run-due';
 
@@ -61,5 +67,14 @@ export async function startJobs(): Promise<void> {
   await boss.createQueue(REPORTS_JOB);
   await boss.work(REPORTS_JOB, async () => void (await runDueSchedules()));
   await boss.schedule(REPORTS_JOB, '* * * * *');
+  await boss.createQueue(BACKUP_JOB);
+  await boss.work(BACKUP_JOB, async () => void (await runBackup()));
+  await boss.schedule(BACKUP_JOB, '30 20 * * *'); // 02:00 IST
+  await boss.createQueue(RETENTION_JOB);
+  await boss.work(RETENTION_JOB, async () => runRetention());
+  await boss.schedule(RETENTION_JOB, '40 21 * * *'); // 03:10 IST, after the stock check
+  await boss.createQueue(RESTORE_REMINDER_JOB);
+  await boss.work(RESTORE_REMINDER_JOB, async () => void (await remindRestoreTest()));
+  await boss.schedule(RESTORE_REMINDER_JOB, '0 4 * * *'); // 09:30 IST
   logger.info('background jobs started');
 }

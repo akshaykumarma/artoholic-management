@@ -19,7 +19,15 @@ export const adminStatusSchema = z.object({
   platformVersion: z.string(),
   checkedAt: z.string(),
   parts: z.array(partStatusSchema),
-  mobileVersions: z.array(mobileVersionSettingSchema)
+  mobileVersions: z.array(mobileVersionSettingSchema),
+  /** 010 US7 */
+  extended: z.object({
+    jobQueue: z.number(),
+    failedMessages24h: z.number(),
+    storage: z.object({ usedBytes: z.number(), quotaBytes: z.number().nullable() }),
+    lastBackup: z.object({ at: z.string(), status: z.string(), bytes: z.number().nullable() }).nullable(),
+    appVersions: z.array(z.object({ platform: z.string(), version: z.string(), sessions: z.number() }))
+  }).optional()
 });
 export type AdminStatus = z.infer<typeof adminStatusSchema>;
 

@@ -25,7 +25,7 @@ export const MODULES: readonly ModuleDef[] = [
   { id: 'counts', labelKey: 'module.counts', path: '/counts', roles: ['super_admin', 'admin', 'store_manager'], apps: ALL_APPS, shipped: true, deliveredIn: '007' },
   { id: 'notifications', labelKey: 'module.notifications', path: '/notifications', roles: ROLES, apps: ALL_APPS, shipped: true, deliveredIn: '008' },
   { id: 'reports', labelKey: 'module.reports', path: '/reports', roles: ROLES, apps: ALL_APPS, shipped: true, deliveredIn: '009' },
-  { id: 'admin-console', labelKey: 'module.adminConsole', path: '/admin', roles: ['super_admin', 'admin'], apps: ['web'], shipped: false, deliveredIn: '010' },
+  { id: 'admin-console', labelKey: 'module.adminConsole', path: '/admin', roles: ['super_admin', 'admin'], apps: ['web'], shipped: true, deliveredIn: '010' },
   { id: 'admin-status', labelKey: 'module.adminStatus', path: '/admin/status', roles: ['super_admin'], apps: ['web'], shipped: true, deliveredIn: '001' },
   { id: 'conventions', labelKey: 'module.conventions', path: '/reference/conventions', roles: ['super_admin'], apps: ALL_APPS, shipped: true, deliveredIn: '001' }
 ];

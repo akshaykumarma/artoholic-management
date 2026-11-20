@@ -2,10 +2,10 @@ import { z } from 'zod';
 import { providerUpdateSchema } from '@artoholic/shared';
 import { api, parseBody } from '@/server/http/handler';
 import { requireSession } from '@/server/auth/guards';
+import { getProvider, requireSuperAdmin, setProvider } from '@/server/notifications/admin';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-import { getProvider, requireSuperAdmin, setProvider } from '@/server/notifications/admin';
 
 const channel = z.enum(['whatsapp', 'email']);
 

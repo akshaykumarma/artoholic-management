@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { formatDateTimeIST, t, type MessageKey } from '@artoholic/shared';
 import { requirePageAuth, can } from '@/lib/server-auth';
 import Forbidden from '@/components/Forbidden';
@@ -30,6 +31,19 @@ export default async function StatusPage() {
         </table>
         <p className="muted">{t('status.version')}: {s.platformVersion}</p>
       </section>
+      {s.extended ? (
+        <section className="card">
+          <table>
+            <tbody>
+              <tr><td>{t('adm.queue')}</td><td data-testid="job-queue">{s.extended.jobQueue}</td></tr>
+              <tr><td>{t('adm.failedMessages')}</td><td><Link href="/admin/messages?status=failed" data-testid="failed-messages">{s.extended.failedMessages24h}</Link></td></tr>
+              <tr><td>{t('adm.storage')}</td><td>{`${(s.extended.storage.usedBytes / 1024 / 1024).toFixed(1)} MB${s.extended.storage.quotaBytes ? ` / ${(s.extended.storage.quotaBytes / 1024 ** 3).toFixed(0)} GB` : ''}`}</td></tr>
+              <tr><td>{t('adm.lastBackup')}</td><td>{s.extended.lastBackup ? `${formatDateTimeIST(s.extended.lastBackup.at)} · ${s.extended.lastBackup.status}` : t('adm.never')}</td></tr>
+              <tr><td>{t('adm.versions')}</td><td>{s.extended.appVersions.map((v) => `${v.platform} ${v.version}: ${v.sessions}`).join(' · ')}</td></tr>
+            </tbody>
+          </table>
+        </section>
+      ) : null}
       <MobileVersionsForm initial={s.mobileVersions} />
     </>
   );

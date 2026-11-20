@@ -81,7 +81,7 @@ describe('GET /api/v1/me and sign-out', () => {
     const res = await me(makeReq('GET', '/api/v1/me', { cookies }));
     expect(res.status).toBe(200);
     const body = meResponseSchema.parse(await res.json());
-    expect(body.menu.map((m) => m.moduleId)).toEqual(['home', 'users', 'inventory', 'warehouses', 'events', 'checklists', 'counts', 'notifications', 'reports', 'admin-status', 'conventions']);
+    expect(body.menu.map((m) => m.moduleId)).toEqual(['home', 'users', 'inventory', 'warehouses', 'events', 'checklists', 'counts', 'notifications', 'reports', 'admin-console', 'admin-status', 'conventions']);
     expect(body.session.idleTimeoutMinutes).toBe(60);
   });
 
