@@ -22,6 +22,18 @@ test('Super Admin signs in and sees the role menu (US1-1)', async ({ page }) => 
   await expect(nav.getByRole('link')).toHaveText(['Home', 'Users & roles', 'Inventory', 'Warehouses & locations', 'Events', 'Event checklists', 'Physical counts', 'Notifications', 'Reports', 'Admin console', 'Platform status', 'Display conventions']);
 });
 
+test('"Show password" reveals and hides the typed password', async ({ page }) => {
+  await page.goto('/sign-in');
+  await page.waitForLoadState('networkidle');
+  const box = page.getByLabel('Password', { exact: true });
+  await box.fill('e2e-password-123');
+  await expect(box).toHaveAttribute('type', 'password');
+  await page.getByRole('button', { name: 'Show password' }).click();
+  await expect(box).toHaveAttribute('type', 'text');
+  await page.getByRole('button', { name: 'Hide password' }).click();
+  await expect(box).toHaveAttribute('type', 'password');
+});
+
 test('signed-out visitor is returned to the page they asked for (US1-5)', async ({ page }) => {
   await page.goto('/admin/status');
   await expect(page).toHaveURL(/returnTo=%2Fadmin%2Fstatus/);

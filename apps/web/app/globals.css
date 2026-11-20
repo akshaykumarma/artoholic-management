@@ -30,3 +30,6 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
 .brand-mark { width: 28px; height: 28px; border-radius: 50%; background: var(--saffron); box-shadow: 0 0 0 4px var(--brand); flex: none; }
 .brand-name { font-size: 22px; font-weight: 700; letter-spacing: 0.5px; color: var(--brand); text-transform: lowercase; }
 .tagline { font-style: italic; color: var(--muted); font-size: 13px; margin: 0 0 16px; }
+.password-field { display: flex; gap: 8px; align-items: stretch; }
+.password-field input { flex: 1; min-width: 0; }
+.password-field button { margin-top: 0; white-space: nowrap; background: #fff; color: var(--ink); border: 1px solid var(--line); font-size: 14px; }

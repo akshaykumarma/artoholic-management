@@ -41,6 +41,15 @@ describe('mobile sign-in (US1)', () => {
     fireEvent.press(screen.getByRole('button', { name: 'Sign in' }));
     expect(await screen.findByText('Username or password is incorrect')).toBeTruthy();
   });
+
+  it('hides the password until "Show password" is pressed', () => {
+    renderWithAuth(<SignInScreen />);
+    expect(screen.getByLabelText('Password').props.secureTextEntry).toBe(true);
+    fireEvent.press(screen.getByRole('button', { name: 'Show password' }));
+    expect(screen.getByLabelText('Password').props.secureTextEntry).toBe(false);
+    fireEvent.press(screen.getByRole('button', { name: 'Hide password' }));
+    expect(screen.getByLabelText('Password').props.secureTextEntry).toBe(true);
+  });
 });
 
 describe('mobile home menu (US1)', () => {

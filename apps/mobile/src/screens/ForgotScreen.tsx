@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ScrollView, Text } from 'react-native';
 import { t } from '@artoholic/shared';
 import { useAuth } from '../auth/AuthContext';
-import { Button, Field, Message, ui } from './ui';
+import { Button, Field, PasswordField, Message, ui } from './ui';
 
 /** Self-service reset by 6-digit WhatsApp/email code (002 US3). */
 export default function ForgotScreen({ onDone }: { onDone: () => void }) {
@@ -34,7 +34,7 @@ export default function ForgotScreen({ onDone }: { onDone: () => void }) {
       {sent ? (
         <>
           <Field label={t('reset.code')} value={code} onChangeText={setCode} keyboardType="number-pad" maxLength={6} textContentType="oneTimeCode" />
-          <Field label={t('reset.newPassword')} value={password} onChangeText={setPassword} secureTextEntry />
+          <PasswordField label={t('reset.newPassword')} value={password} onChangeText={setPassword} />
           <Button label={t('reset.submit')} busy={busy} onPress={() => go(async () => {
             await api.post('/api/v1/auth/reset', { identifier, code, newPassword: password });
             setMsg({ text: t('reset.done') });
