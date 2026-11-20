@@ -6,11 +6,12 @@ import { listMessages } from '@/server/notifications/admin';
 export const dynamic = 'force-dynamic';
 
 /** The permanent WhatsApp and email log, full text with one-time codes redacted (US5). */
-export default async function MessagesPage({ searchParams }: { searchParams: { q?: string; channel?: string } }) {
+export default async function MessagesPage({ searchParams }: { searchParams: { q?: string; channel?: string; status?: string } }) {
   const auth = await requirePageAuth();
   if (!auth.user.roles.includes('super_admin')) return <Forbidden />;
   const channel = searchParams.channel === 'whatsapp' || searchParams.channel === 'email' ? searchParams.channel : undefined;
-  const items = await listMessages({ q: searchParams.q, channel });
+  const status = searchParams.status && /^[a-z]{3,10}$/.test(searchParams.status) ? searchParams.status : undefined;
+  const items = await listMessages({ q: searchParams.q, channel, status });
   return (
     <section className="card">
       <h2>{t('msg.title')}</h2>
