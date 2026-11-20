@@ -24,3 +24,6 @@
   text stays in each event's Activity and in Super Admin → Login & activity. OTP codes
   are always shown redacted there.
 - Owner decisions Q1–Q14 (PRD §13) are settled; don't reopen them without the owner.
+- **Checklists are one entry per step for the whole event** (owner, 2026-11-20): one submission per
+  step (per warehouse for warehouse steps), with one set of vehicle and driver details; trucks and
+  truckloads are not tracked.
