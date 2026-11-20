@@ -17,7 +17,6 @@
 
 ## Waiting on the owner (Artoholic's accounts and real phones)
 
-- **T001** Confirm the app name "Artoholic" and the id `in.artoholic.ops`.
 - **T003** Create the Play and Apple developer accounts; upload the FCM v1 key and the APNs .p8 to Expo; set `EAS_PROJECT_ID`,
   `EAS_ENABLED`, `EXPO_TOKEN` and the production API URL.
 - **T006 / T012 / T016** Build with `git tag mobile-v0.1.0`, install from internal testing on an Android 9 phone and an iOS 15
@@ -30,6 +29,11 @@ Steps for all of these are in `docs/runbooks/mobile-release.md`.
 - Shared 67/67, web integration and contract 280/280, mobile 36/36, Playwright e2e 16/16.
 - Typecheck and lint clean (exit code 0).
 
+## Owner decisions (2026-11-20)
+
+- **T001**: app name "Artoholic" and id `in.artoholic.ops` confirmed.
+- **Account deletion**: keeping the message log and audit values unchanged on pseudonymisation is accepted (see below).
+
 ## Note for the owner
 
 Pseudonymisation changes the person's details everywhere they are shown, because every screen reads the name through the user id.
@@ -37,4 +41,4 @@ Two permanent records are not rewritten:
 - the WhatsApp/email message log keeps the phone number or email a message was sent to (owner decision: the message log is permanent);
 - audit entries keep the before/after values captured at the time (the audit log is append-only).
 
-Confirm this matches the DPDP position you want, or decide whether those two records should be masked too.
+The owner confirmed on 2026-11-20 that this is the intended position; nothing more is masked.

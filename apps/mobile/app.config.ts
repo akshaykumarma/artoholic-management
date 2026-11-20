@@ -7,7 +7,7 @@ const config: ExpoConfig = {
   version: '0.1.0',
   orientation: 'portrait',
   userInterfaceStyle: 'light',
-  // Identifiers proposed in 011 R2; the owner confirms them before the first store submission (011 T001).
+  // Store identity confirmed by the owner on 2026-11-20 (011 T001).
   ios: {
     supportsTablet: false,
     bundleIdentifier: 'in.artoholic.ops',

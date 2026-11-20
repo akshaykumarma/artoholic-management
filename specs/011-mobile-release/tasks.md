@@ -17,7 +17,7 @@ before its implementation task.
 
 ## Phase 1: Setup
 
-- [ ] T001 Confirm app name and bundle/package id with the owner; set them in `apps/mobile/app.config.ts` (default proposal `in.artoholic.ops`) — **open: awaiting owner confirmation of name and id**
+- [X] T001 Confirm app name and bundle/package id with the owner; set them in `apps/mobile/app.config.ts` (default proposal `in.artoholic.ops`) — confirmed by the owner 2026-11-20
 - [X] T002 [P] EAS `production` profile, `appVersionSource: remote`, `autoIncrement` in `apps/mobile/eas.json`
 - [ ] T003 [P] Upload FCM v1 key and APNs .p8 to Expo (no secrets in repo); document in `docs/runbooks/mobile-release.md` — **open: owner uploads keys to Expo — steps in docs/runbooks/mobile-release.md**
 
