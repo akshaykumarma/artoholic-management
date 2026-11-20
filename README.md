@@ -29,10 +29,12 @@ npm install
 cp .env.example .env
 ```
 
-In `.env`, set `DEV_TOOLS=true` so you can read password-reset codes at `/dev/outbox` while testing.
+In `.env`, set `DEV_TOOLS=true` so you can read password-reset codes at `/dev/outbox` while testing, and
+`STORAGE_DRIVER=memory` so uploaded photos and files are kept in memory (they are lost when the server stops;
+MinIO's images are no longer published on Docker Hub).
 
 ```bash
-docker compose up -d db minio minio-init mailpit
+docker compose up -d db mailpit
 ```
 
 ```bash

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ScrollView, Text } from 'react-native';
 import { ApiClientError, t, type MessageKey } from '@artoholic/shared';
 import { useAuth } from '../auth/AuthContext';
-import { Button, Field, Message, ui } from './ui';
+import { Button, PasswordField, Message, ui } from './ui';
 
 /** Required after sign-in with a temporary password (002 FR-008). */
 export default function ChangePasswordScreen() {
@@ -30,8 +30,8 @@ export default function ChangePasswordScreen() {
   return (
     <ScrollView contentContainerStyle={ui.screen}>
       <Text style={ui.title}>{t('change.title')}</Text>
-      <Field label={t('change.current')} value={current} onChangeText={setCurrent} secureTextEntry />
-      <Field label={t('change.new')} value={next} onChangeText={setNext} secureTextEntry />
+      <PasswordField label={t('change.current')} value={current} onChangeText={setCurrent} />
+      <PasswordField label={t('change.new')} value={next} onChangeText={setNext} />
       <Text style={ui.muted}>{[t('password.rule.length'), t('password.rule.notIdentifier'), t('password.rule.notCommon')].join(' · ')}</Text>
       <Button label={t('change.submit')} busy={busy} onPress={submit} />
       {error ? <Message error>{error}</Message> : null}

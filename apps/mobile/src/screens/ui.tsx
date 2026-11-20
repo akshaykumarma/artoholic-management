@@ -1,5 +1,6 @@
-import React, { type ReactNode } from 'react';
+import React, { useState, type ReactNode } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-native';
+import { t } from '@artoholic/shared';
 import { colors } from '../theme';
 
 /** Small shared building blocks so every form has 48 pt targets and consistent labels. */
@@ -8,6 +9,22 @@ export function Field({ label, ...props }: { label: string } & TextInputProps) {
     <View>
       <Text style={ui.label}>{label}</Text>
       <TextInput accessibilityLabel={label} style={ui.input} autoCapitalize="none" autoCorrect={false} {...props} />
+    </View>
+  );
+}
+
+/** A password box with a "Show password" button that reveals what was typed. */
+export function PasswordField({ label, ...props }: { label: string } & Omit<TextInputProps, 'secureTextEntry'>) {
+  const [shown, setShown] = useState(false);
+  return (
+    <View>
+      <Text style={ui.label}>{label}</Text>
+      <View style={ui.passwordRow}>
+        <TextInput accessibilityLabel={label} style={[ui.input, ui.passwordInput]} autoCapitalize="none" autoCorrect={false} secureTextEntry={!shown} {...props} />
+        <Pressable accessibilityRole="button" accessibilityLabel={shown ? t('password.hide') : t('password.show')} style={ui.showButton} onPress={() => setShown((s) => !s)}>
+          <Text style={ui.secondaryText}>{shown ? t('password.hide') : t('password.show')}</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -36,5 +53,8 @@ export const ui = StyleSheet.create({
   error: { color: colors.error, marginTop: 12 },
   status: { color: colors.ink, marginTop: 12 },
   row: { minHeight: 56, borderRadius: 12, backgroundColor: '#fff', borderWidth: 1, borderColor: colors.line, padding: 12, justifyContent: 'center', marginTop: 8 },
-  muted: { color: colors.muted }
+  muted: { color: colors.muted },
+  passwordRow: { flexDirection: 'row', gap: 8 },
+  passwordInput: { flex: 1 },
+  showButton: { minHeight: 48, borderRadius: 8, borderWidth: 1, borderColor: colors.line, backgroundColor: '#fff', paddingHorizontal: 12, justifyContent: 'center' }
 });

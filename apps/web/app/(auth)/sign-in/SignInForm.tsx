@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { ApiClientError, signInWebResponseSchema, t, formatDateTimeIST } from '@artoholic/shared';
 import Link from 'next/link';
 import { api } from '@/lib/api';
+import { PasswordInput } from '@/components/PasswordInput';
 
 /** Only same-site relative paths are accepted as return targets. */
 function safeReturn(path: string | null): string {
@@ -43,7 +44,7 @@ export default function SignInForm() {
       <label htmlFor="identifier">{t('signIn.identifier')}</label>
       <input id="identifier" name="username" autoComplete="username" value={identifier} onChange={(e) => setIdentifier(e.target.value)} required />
       <label htmlFor="password">{t('signIn.password')}</label>
-      <input id="password" name="password" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+      <PasswordInput id="password" name="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
       <button type="submit" disabled={busy}>{busy ? t('signIn.signingIn') : t('signIn.submit')}</button>
       {error ? <p role="alert" className="error">{error}</p> : null}
       <p><Link href="/forgot">{t('signIn.forgot')}</Link></p>

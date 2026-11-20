@@ -626,6 +626,8 @@ export const en = {
   'tr.status.dispatched': 'In transit',
   'tr.status.received': 'Received',
   'tr.status.cancelled': 'Cancelled',
+  'password.show': 'Show password',
+  'password.hide': 'Hide password',
   'password.rule.length': 'At least 8 characters',
   'password.rule.notIdentifier': 'Not the same as your username, phone or email',
   'password.rule.notCommon': 'Not a commonly used password',

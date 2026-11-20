@@ -4,6 +4,7 @@ import { ApiClientError, formatDateTimeIST, t } from '@artoholic/shared';
 import { useAuth } from '../auth/AuthContext';
 import { colors } from '../theme';
 import { BrandHeader } from './BrandHeader';
+import { PasswordField } from './ui';
 
 export default function SignInScreen({ onForgot }: { onForgot?: () => void }) {
   const { signIn } = useAuth();
@@ -33,8 +34,7 @@ export default function SignInScreen({ onForgot }: { onForgot?: () => void }) {
       <BrandHeader />
       <Text style={styles.label}>{t('signIn.identifier')}</Text>
       <TextInput accessibilityLabel={t('signIn.identifier')} style={styles.input} autoCapitalize="none" autoCorrect={false} value={username} onChangeText={setUsername} />
-      <Text style={styles.label}>{t('signIn.password')}</Text>
-      <TextInput accessibilityLabel={t('signIn.password')} style={styles.input} secureTextEntry value={password} onChangeText={setPassword} />
+      <PasswordField label={t('signIn.password')} value={password} onChangeText={setPassword} />
       <Pressable accessibilityRole="button" accessibilityLabel={t('signIn.submit')} style={styles.button} onPress={submit} disabled={busy}>
         {busy ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>{t('signIn.submit')}</Text>}
       </Pressable>

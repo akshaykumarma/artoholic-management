@@ -3,6 +3,7 @@ import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import { t } from '@artoholic/shared';
 import { api } from '@/lib/api';
+import { PasswordInput } from '@/components/PasswordInput';
 
 /** Step 1: ask for a code. Step 2: enter code and new password (002 US3). */
 export default function ForgotForm() {
@@ -57,7 +58,7 @@ export default function ForgotForm() {
           <label htmlFor="code">{t('reset.code')}</label>
           <input id="code" inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={code} onChange={(e) => setCode(e.target.value)} required />
           <label htmlFor="new-password">{t('reset.newPassword')}</label>
-          <input id="new-password" type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <PasswordInput id="new-password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
           <button type="submit">{t('reset.submit')}</button>
         </>
       ) : (
