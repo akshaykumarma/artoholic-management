@@ -36,7 +36,7 @@ export default function SignInScreen({ onForgot }: { onForgot?: () => void }) {
       <TextInput accessibilityLabel={t('signIn.identifier')} style={styles.input} autoCapitalize="none" autoCorrect={false} value={username} onChangeText={setUsername} />
       <PasswordField label={t('signIn.password')} value={password} onChangeText={setPassword} />
       <Pressable accessibilityRole="button" accessibilityLabel={t('signIn.submit')} style={styles.button} onPress={submit} disabled={busy}>
-        {busy ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>{t('signIn.submit')}</Text>}
+        {busy ? <ActivityIndicator color={colors.brandDark} /> : <Text style={styles.buttonText}>{t('signIn.submit')}</Text>}
       </Pressable>
       {error ? <Text accessibilityRole="alert" style={styles.error}>{error}</Text> : null}
       {onForgot ? (
@@ -51,10 +51,10 @@ export default function SignInScreen({ onForgot }: { onForgot?: () => void }) {
 const styles = StyleSheet.create({
   wrap: { flex: 1, padding: 24, justifyContent: 'center', backgroundColor: colors.bg },
   label: { fontWeight: '600', marginTop: 12, marginBottom: 4, color: colors.ink },
-  input: { minHeight: 48, borderWidth: 1, borderColor: colors.line, borderRadius: 8, paddingHorizontal: 12, fontSize: 16, backgroundColor: '#fff' },
-  button: { marginTop: 20, minHeight: 48, borderRadius: 8, backgroundColor: colors.brand, justifyContent: 'center', alignItems: 'center' },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  input: { minHeight: 50, borderWidth: 1, borderColor: '#d9d4cb', borderRadius: 12, paddingHorizontal: 14, fontSize: 16, backgroundColor: '#fff', color: colors.ink },
+  button: { marginTop: 22, minHeight: 50, borderRadius: 12, backgroundColor: colors.saffron, justifyContent: 'center', alignItems: 'center' },
+  buttonText: { color: colors.brandDark, fontSize: 16, fontWeight: '700' },
   error: { color: colors.error, marginTop: 12 },
   link: { marginTop: 16, minHeight: 44, justifyContent: 'center' },
-  linkText: { color: colors.brand, textDecorationLine: 'underline' }
+  linkText: { color: colors.link, textDecorationLine: 'underline' }
 });

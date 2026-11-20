@@ -42,3 +42,10 @@ jest.mock('expo-file-system', () => ({
   downloadAsync: jest.fn(async (_url: string, uri: string) => ({ uri, status: 200, headers: {} }))
 }));
 jest.mock('expo-sharing', () => ({ isAvailableAsync: jest.fn(async () => true), shareAsync: jest.fn(async () => undefined) }));
+// Icon fonts are native assets; render icons as plain text in tests.
+jest.mock('@expo/vector-icons', () => {
+  const React = jest.requireActual('react');
+  const { Text } = jest.requireActual('react-native');
+  const Icon = ({ name }: { name: string }) => React.createElement(Text, null, name);
+  return { Ionicons: Icon };
+});

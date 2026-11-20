@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { formatDateTimeIST, formatPlainDate, formatQuantity, isEditable, t, type MessageKey } from '@artoholic/shared';
+import { formatDateTimeIST, formatPlainDate, formatQuantity, isEditable, t } from '@artoholic/shared';
 import { requirePageAuth, can } from '@/lib/server-auth';
 import Forbidden from '@/components/Forbidden';
 import { getEvent } from '@/server/events/events';
@@ -8,6 +8,7 @@ import LiveEventPanel from './LiveEventPanel';
 import { getRounds } from '@/server/checklists/steps';
 import { getLineTotals } from '@/server/events/closure';
 import { eventFormOptions } from '../load-options';
+import StatusPill from '@/components/StatusPill';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,7 +36,7 @@ export default async function EventPage({ params }: { params: { id: string } }) 
       <section className="card">
         <p><Link href="/events">{t('ev.title')}</Link></p>
         <h2>{`${e.name || e.number} · ${e.number}`}</h2>
-        <p>{[t(`ev.status.${e.status}` as MessageKey), e.typeName].filter(Boolean).join(' · ')}</p>
+        <p><StatusPill status={e.status} />{e.typeName ? ` · ${e.typeName}` : null}</p>
         {e.cancelledReason ? <p>{t('ev.cancelled', { reason: e.cancelledReason })}</p> : null}
         <p>{[e.venueName, e.venueAddress].filter(Boolean).join(', ')}</p>
         <p>{[e.startsAt ? formatDateTimeIST(e.startsAt) : '', e.endsAt ? formatDateTimeIST(e.endsAt) : ''].filter(Boolean).join(' → ')}</p>
